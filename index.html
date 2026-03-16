@@ -84,9 +84,9 @@
             <p class="text-slate-500 mb-4">Colegio Fasta San Vicente de Paúl</p>
             <div id="connection-status-loading" class="connection-status checking">
                 <span class="status-dot checking"></span>
-                <span id="loading-text">Conectando con Google Sheets...</span>
+                <span id="loading-text">Conectando...</span>
             </div>
-            <p id="loading-subtext" class="text-xs text-slate-400 mt-3">Cargando datos...</p>
+            <p id="loading-subtext" class="text-xs text-slate-400 mt-3">Cargando datos de Google Sheets...</p>
         </div>
     </div>
 
@@ -110,7 +110,6 @@
                 </div>
             </div>
             
-            <!-- Connection Status -->
             <div class="p-4 bg-slate-50 border-b border-slate-100">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-semibold text-slate-500 uppercase">Google Sheets</span>
@@ -124,7 +123,6 @@
                 </button>
             </div>
             
-            <!-- Stats -->
             <div class="p-4 bg-blue-50 border-b border-slate-100">
                 <div class="grid grid-cols-3 gap-2">
                     <div class="text-center p-2 bg-white rounded-lg">
@@ -142,13 +140,11 @@
                 </div>
             </div>
             
-            <!-- Subject Filters -->
             <div class="flex-1 overflow-y-auto p-4">
                 <h3 class="text-xs font-semibold text-slate-400 uppercase mb-3">Materias</h3>
                 <div id="subject-filters-desktop" class="space-y-1.5"></div>
             </div>
             
-            <!-- Actions -->
             <div class="p-4 border-t border-slate-100 bg-slate-50">
                 <div class="grid grid-cols-2 gap-2">
                     <button onclick="exportData()" class="py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium btn-press">
@@ -162,7 +158,7 @@
             </div>
         </aside>
 
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden min-w-0">
             
             <!-- Mobile Header -->
@@ -179,7 +175,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="syncWithSheets()" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 btn-press" title="Sincronizar">
+                            <button onclick="syncWithSheets()" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 btn-press">
                                 <i class="fa-solid fa-rotate text-sm"></i>
                             </button>
                             <button onclick="openCreateModal()" class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white btn-press">
@@ -188,7 +184,6 @@
                         </div>
                     </div>
                     
-                    <!-- Connection Status Mobile -->
                     <div id="connection-status-mobile" class="connection-status checking mb-3">
                         <span class="status-dot checking"></span>
                         <span>Conectando...</span>
@@ -421,9 +416,9 @@
 
     <script>
         // ============================================
-        // CONFIGURATION
+        // CONFIGURATION - REEMPLAZÁ CON TU NUEVA URL
         // ============================================
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhQR18KUCrYmYZb1l_S4lHzQN2tqJOsY4Pe8POPhlmJB7MI0YljiEbFXaFJx9ROV_3/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbylWaUC96CguRa1_jFiyV_-fOIjSwXT1M3-cAwwwZWm6xiVvLNhnSBNgNMCDKOoEJs7/exec';
         
         let isConnected = false;
         let isLoadingComplete = false;
@@ -533,8 +528,6 @@
             if (isLoadingComplete) return;
             isLoadingComplete = true;
             
-            console.log('📱 Hiding loading screen...');
-            
             setTimeout(() => {
                 const loadingScreen = document.getElementById('loading-screen');
                 const app = document.getElementById('app');
@@ -543,7 +536,6 @@
                 setTimeout(() => {
                     if (loadingScreen) loadingScreen.classList.add('hidden');
                     if (app) app.classList.remove('hidden');
-                    console.log('✅ Loading screen hidden, app visible');
                 }, 500);
             }, 1000);
         }
@@ -554,7 +546,7 @@
         
         // Callback function for JSONP responses
         window.handleData = function(response) {
-            console.log('✅ handleData called with:', response);
+            console.log('✅ handleData called:', response);
             
             try {
                 if (response && response.success) {
@@ -562,7 +554,6 @@
                     console.log('📊 Loaded', events.length, 'events from Google Sheets');
                     updateConnectionStatus('online');
                     
-                    // Save to localStorage as backup
                     localStorage.setItem('agenda3roa_events', JSON.stringify(events));
                     localStorage.setItem('agenda3roa_last_sync', new Date().toISOString());
                     
@@ -583,7 +574,6 @@
             hideLoadingScreen();
         };
 
-        // Load from localStorage as fallback
         function loadFromLocalStorage() {
             const cached = localStorage.getItem('agenda3roa_events');
             if (cached) {
@@ -601,7 +591,6 @@
             }
         }
 
-        // Sync with Google Sheets using JSONP
         function syncWithSheets() {
             console.log('🔄 Starting sync with Google Sheets...');
             updateConnectionStatus('checking');
@@ -611,7 +600,7 @@
             if (loadingText) loadingText.textContent = 'Conectando...';
             if (loadingSubtext) loadingSubtext.textContent = 'Descargando datos...';
             
-            // Remove any existing script tags to avoid duplicates
+            // Remove existing script tags
             const existingScripts = document.querySelectorAll('script[data-gsheets="true"]');
             existingScripts.forEach(s => s.remove());
             
@@ -636,9 +625,9 @@
             };
             
             document.body.appendChild(script);
-            console.log('📜 Script tag added to body');
+            console.log('📜 Script tag added:', script.src);
             
-            // Timeout fallback - hide loading after 10 seconds even if no response
+            // Timeout fallback
             setTimeout(() => {
                 if (!isLoadingComplete) {
                     console.warn('⏱️ Timeout - forcing load from cache');
@@ -651,7 +640,6 @@
             }, 10000);
         }
 
-        // Save data to Google Sheets
         async function saveToGoogleSheets(eventData, action = 'create') {
             const submitBtn = document.getElementById('submit-btn');
             const originalText = submitBtn.innerHTML;
@@ -666,7 +654,6 @@
                     body: JSON.stringify({ action: action, ...eventData })
                 });
                 
-                // Update local data
                 if (action === 'create') {
                     events.push(eventData);
                 } else if (action === 'update') {
@@ -676,7 +663,6 @@
                     events = events.filter(e => e.id !== eventData.id);
                 }
                 
-                // Save to localStorage
                 localStorage.setItem('agenda3roa_events', JSON.stringify(events));
                 
                 updateConnectionStatus('online');
@@ -688,7 +674,6 @@
             } catch (error) {
                 console.error('Save error:', error);
                 
-                // Still save locally
                 if (action === 'create') {
                     events.push(eventData);
                 } else if (action === 'update') {
@@ -754,9 +739,6 @@
             document.getElementById('stat-obligaciones').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'obligacion').length;
         }
 
-        // ============================================
-        // VIEW FUNCTIONS
-        // ============================================
         function switchView(view) {
             currentView = view;
             ['month', 'week', 'day', 'list'].forEach(v => {
@@ -792,9 +774,6 @@
             renderCalendar();
         }
 
-        // ============================================
-        // FILTER FUNCTIONS
-        // ============================================
         function renderSubjectFilters() {
             const mobileContainer = document.getElementById('subject-filters-mobile');
             const desktopContainer = document.getElementById('subject-filters-desktop');
@@ -1123,9 +1102,6 @@
             }
         }
 
-        // ============================================
-        // CALENDAR RENDERING
-        // ============================================
         function renderCalendar() {
             const container = document.getElementById('calendar-content');
             const displayMobile = document.getElementById('current-date-display-mobile');
