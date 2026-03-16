@@ -475,9 +475,13 @@
         }
 
         function parseLocalDate(dateString) {
-            const [year, month, day] = dateString.split('-').map(Number);
-            return new Date(year, month - 1, day);
-        }
+    if (!dateString) {
+        console.warn('⚠️ Invalid date:', dateString);
+        return new Date(); // Return today as fallback
+    }
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day);
+}
 
         function getDayOfWeek(dateString) {
             const date = parseLocalDate(dateString);
@@ -570,26 +574,23 @@
             }
             
             renderCalendar();
-            updateStats();
-            hideLoadingScreen();
-        };
-
-        function loadFromLocalStorage() {
-            const cached = localStorage.getItem('agenda3roa_events');
-            if (cached) {
-                try {
-                    events = JSON.parse(cached);
-                    console.log('📦 Loaded', events.length, 'events from localStorage');
-                    showToast('Usando datos en caché', 'warning');
-                } catch (e) {
-                    console.error('❌ Error parsing cached data:', e);
-                    events = [];
-                }
-            } else {
-                console.log('📭 No cached data found');
-                events = [];
-            }
+            function updateStats() {
+    const now = new Date();
+    const thisMonth = events.filter(e => {
+        const dateStr = e.fecha || e.date;
+        if (!dateStr) return false; // Skip events without date
+        try {
+            const eDate = parseLocalDate(dateStr);
+            return eDate.getMonth() === now.getMonth() && eDate.getFullYear() === now.getFullYear();
+        } catch (error) {
+            console.warn('⚠️ Invalid date in event:', e);
+            return false;
         }
+    });
+    document.getElementById('stat-pruebas').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'prueba').length;
+    document.getElementById('stat-tps').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'tp').length;
+    document.getElementById('stat-obligaciones').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'obligacion').length;
+}
 
         function syncWithSheets() {
             console.log('🔄 Starting sync with Google Sheets...');
@@ -1121,13 +1122,17 @@
         }
 
         function getEventsForDate(date) {
-            const dateStr = getLocalDateString(date);
-            let dayEvents = events.filter(e => e.fecha === dateStr || e.date === dateStr);
-            if (activeFilter) {
-                dayEvents = dayEvents.filter(e => e.materia === activeFilter || e.subject === activeFilter);
-            }
-            return dayEvents;
-        }
+    const dateStr = getLocalDateString(date);
+    let dayEvents = events.filter(e => {
+        const eventDate = e.fecha || e.date;
+        if (!eventDate) return false; // Skip events without date
+        return eventDate === dateStr;
+    });
+    if (activeFilter) {
+        dayEvents = dayEvents.filter(e => e.materia === activeFilter || e.subject === activeFilter);
+    }
+    return dayEvents;
+}
 
         function renderMonthView(container) {
             const year = currentDate.getFullYear();
