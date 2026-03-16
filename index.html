@@ -1,5 +1,4 @@
-
-                        <!DOCTYPE html>
+<!DOCTYPE html>
                         <html lang="en">
                         <head>
                             <meta charset="UTF-8">
@@ -1551,6 +1550,148 @@
                 });
             }
             
+            if (listFilters.subject !== 'all') {
+                filteredEvents = filteredEvents.filter(e => (e.materia || e.subject) === listFilters.subject);
+            }
+            
+            filteredEvents = filteredEvents.filter(e => listFilters.types.includes(e.tipo || e.type));
+            
+            filteredEvents.sort((a, b) => {
+                const aDate = new Date(a.fecha || a.date);
+                const bDate = new Date(b.fecha || b.date);
+                return listFilters.sort === 'asc' ? aDate - bDate : bDate - aDate;
+            });
+
+            if(filteredEvents.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-16 text-slate-400">
+                        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa-regular fa-calendar-xmark text-4xl"></i>
+                        </div>
+                        <p class="text-lg font-semibold text-slate-600 mb-2">No hay actividades</p>
+                        <p class="text-sm">Prueba ajustando los filtros</p>
+                        <button onclick="resetListFilters()" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-xl font-medium btn-press">
+                            Restablecer filtros
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `<div class="divide-y divide-slate-100">`;
+
+            filteredEvents.forEach(e => {
+                const dateObj = new Date(e.fecha || e.date);
+                const dateStr = dateObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+                const tipo = e.tipo || e.type;
+                const materia = e.materia || e.subject;
+                const titulo = e.titulo || e.title;
+                
+                let typeIcon = '';
+                let typeColor = '';
+                let typeBg = '';
+                if(tipo === 'prueba') { typeIcon = 'fa-pen-to-square'; typeColor = 'text-red-600'; typeBg = 'bg-red-50'; }
+                if(tipo === 'tp') { typeIcon = 'fa-folder-open'; typeColor = 'text-blue-600'; typeBg = 'bg-blue-50'; }
+                if(tipo === 'obligacion') { typeIcon = 'fa-bell'; typeColor = 'text-amber-600'; typeBg = 'bg-amber-50'; }
+
+                const config = subjectsConfig[materia] || { color: 'bg-slate-100', text: 'text-slate-800', icon: 'fa-book' };
+
+                html += `
+                    <div class="p-4 hover:bg-slate-50 transition-colors">
+                        <div class="flex items-start gap-4">
+                            <div class="flex flex-col items-center justify-center w-14 h-14 ${typeBg} rounded-xl border border-slate-200 flex-shrink-0">
+                                <span class="text-[10px] font-semibold text-slate-500 uppercase">${dateObj.toLocaleDateString('es-ES', { month: 'short' })}</span>
+                                <span class="text-xl font-bold text-slate-800 leading-none">${dateObj.getDate()}</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start gap-2">
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-base font-bold text-slate-800 truncate">${titulo}</h4>
+                                        <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-semibold ${config.color} ${config.text} border ${config.color.replace('bg-', 'border-').replace('100', '200')}">
+                                                <i class="fa-solid ${config.icon} mr-1.5"></i>${materia}
+                                            </span>
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-semibold ${typeBg} ${typeColor} border ${typeColor.replace('text-', 'border-').replace('600', '200')}">
+                                                <i class="fa-solid ${typeIcon} mr-1.5"></i>${tipo.toUpperCase()}
+                                            </span>
+                                            ${e.modalidad ? `<span class="text-[10px] text-slate-400 uppercase font-medium">${e.modalidad}</span>` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        ${e.archivo ? `
+                                            <a href="${e.archivo}" target="_blank" class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-blue-50 hover:text-blue-600 btn-press" title="Ver archivo">
+                                                <i class="fa-solid fa-paperclip"></i>
+                                            </a>
+                                        ` : ''}
+                                        <button onclick="openCreateModal('${e.fecha || e.date}', '${e.id}')" class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-blue-50 hover:text-blue-600 btn-press" title="Editar">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button onclick="deleteEvent('${e.id}')" class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-red-50 hover:text-red-600 btn-press" title="Eliminar">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                ${e.temas || e.topics ? `<p class="text-sm text-slate-500 mt-2">${e.temas || e.topics}</p>` : ''}
+                                ${e.horario ? `<p class="text-xs text-slate-400 mt-1.5"><i class="fa-regular fa-clock mr-1"></i>${e.horario}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        // ============================================
+        // TOAST NOTIFICATIONS
+        // ============================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let icon = '';
+            let bgClass = '';
+            
+            if (type === 'success') {
+                icon = '<i class="fa-solid fa-circle-check text-green-400"></i>';
+                bgClass = 'bg-slate-800';
+            } else if (type === 'error') {
+                icon = '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
+                bgClass = 'bg-slate-800';
+            } else if (type === 'warning') {
+                icon = '<i class="fa-solid fa-triangle-exclamation text-amber-400"></i>';
+                bgClass = 'bg-slate-800';
+            }
+            
+            toast.className = `toast ${bgClass} text-white px-5 py-3.5 rounded-xl shadow-lg flex items-center gap-2 w-full`;
+            toast.innerHTML = `
+                ${icon}
+                <span class="text-sm font-medium flex-1">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+
+
+
+              <script>
+                              // CORRECTO: 0 = Domingo, 6 = Sábado
+const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
+
+              </script>
+                        </body>
+                        </html>
             if (listFilters.subject !== 'all') {
                 filteredEvents = filteredEvents.filter(e => (e.materia || e.subject) === listFilters.subject);
             }
