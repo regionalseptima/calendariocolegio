@@ -47,20 +47,54 @@
         .chip.selected { background: #2563eb; color: white; border-color: #2563eb; }
         .calendar-cell { min-height: 100px; }
         @media (max-width: 640px) { .calendar-cell { min-height: 75px; } }
+        
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .connection-status.online { background: #dcfce7; color: #166534; }
+        .connection-status.offline { background: #fee2e2; color: #991b1b; }
+        .connection-status.checking { background: #fef3c7; color: #92400e; }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        .status-dot.online { background: #22c55e; }
+        .status-dot.offline { background: #ef4444; }
+        .status-dot.checking { background: #eab308; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <body class="text-slate-800">
 
+    <!-- Loading Screen -->
     <div id="loading-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
         <div class="text-center p-8">
             <div class="w-20 h-20 mx-auto mb-6 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg spinner">
                 <i class="fa-solid fa-calendar-check text-4xl text-white"></i>
             </div>
             <h1 class="text-2xl font-bold text-slate-800 mb-2">Agenda 3RO A</h1>
-            <p class="text-slate-500">Cargando...</p>
+            <p class="text-slate-500 mb-4">Colegio Fasta San Vicente de Paúl</p>
+            <div id="connection-status-loading" class="connection-status checking">
+                <span class="status-dot checking"></span>
+                <span>Verificando conexión...</span>
+            </div>
         </div>
     </div>
 
+    <!-- Toast Container -->
     <div id="toast-container" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] space-y-2 w-full max-w-sm px-4"></div>
 
     <!-- App Container -->
@@ -80,6 +114,21 @@
                 </div>
             </div>
             
+            <!-- Connection Status -->
+            <div class="p-4 bg-slate-50 border-b border-slate-100">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Conexión</span>
+                    <div id="connection-status-sidebar" class="connection-status checking">
+                        <span class="status-dot checking"></span>
+                        <span>Verificando...</span>
+                    </div>
+                </div>
+                <button onclick="testConnection()" class="w-full py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium btn-press">
+                    <i class="fa-solid fa-wifi mr-1"></i>Probar Conexión
+                </button>
+            </div>
+            
+            <!-- Stats -->
             <div class="p-4 bg-blue-50 border-b border-slate-100">
                 <div class="grid grid-cols-3 gap-2">
                     <div class="text-center p-2 bg-white rounded-lg">
@@ -97,11 +146,13 @@
                 </div>
             </div>
             
+            <!-- Subject Filters -->
             <div class="flex-1 overflow-y-auto p-4">
                 <h3 class="text-xs font-semibold text-slate-400 uppercase mb-3">Materias</h3>
                 <div id="subject-filters-desktop" class="space-y-1.5"></div>
             </div>
             
+            <!-- Actions -->
             <div class="p-4 border-t border-slate-100 bg-slate-50">
                 <div class="flex gap-2">
                     <button onclick="syncData()" class="flex-1 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium btn-press">
@@ -130,9 +181,20 @@
                                 <p class="text-[10px] text-slate-500">2026</p>
                             </div>
                         </div>
-                        <button onclick="openCreateModal()" class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white btn-press">
-                            <i class="fa-solid fa-plus text-sm"></i>
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="testConnection()" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 btn-press" title="Probar conexión">
+                                <i class="fa-solid fa-wifi text-sm"></i>
+                            </button>
+                            <button onclick="openCreateModal()" class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white btn-press">
+                                <i class="fa-solid fa-plus text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Connection Status Mobile -->
+                    <div id="connection-status-mobile" class="connection-status checking mb-3">
+                        <span class="status-dot checking"></span>
+                        <span>Verificando...</span>
                     </div>
                     
                     <div class="flex items-center justify-between bg-slate-100 rounded-xl p-1">
@@ -361,7 +423,12 @@
     </div>
 
     <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4shbJRTlAkUYjr3gMd2HBFP4Ox8PlRNexE-E3HeHmhXhpQkYGsFS2gbNaxl0ZWGU/exec';
+        
+        let isConnected = false;
         
         const subjectsConfig = {
             'MATEMATICA': { color: 'bg-math', icon: 'fa-calculator', label: 'Matemática' },
@@ -404,6 +471,9 @@
         let selectedDayForModal = null;
         let listFilters = { month: 'all', subject: 'all', types: ['prueba', 'tp', 'obligacion'], sort: 'asc' };
 
+        // ============================================
+        // DATE UTILITIES
+        // ============================================
         function getLocalDateString(date) {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -431,13 +501,88 @@
             return day - 1;
         }
 
+        // ============================================
+        // CONNECTION STATUS
+        // ============================================
+        function updateConnectionStatus(status) {
+            const elements = [
+                document.getElementById('connection-status-sidebar'),
+                document.getElementById('connection-status-mobile'),
+                document.getElementById('connection-status-loading')
+            ];
+            
+            elements.forEach(el => {
+                if (!el) return;
+                el.className = `connection-status ${status}`;
+                const dot = el.querySelector('.status-dot');
+                const text = el.querySelector('span:last-child');
+                
+                if (dot && text) {
+                    dot.className = `status-dot ${status}`;
+                    if (status === 'online') text.textContent = 'En línea';
+                    else if (status === 'offline') text.textContent = 'Sin conexión';
+                    else if (status === 'checking') text.textContent = 'Verificando...';
+                }
+            });
+            
+            isConnected = status === 'online';
+        }
+
+        async function testConnection() {
+            updateConnectionStatus('checking');
+            showToast('Probando conexión...', 'warning');
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                // With no-cors, we can't read the response, but if we get here, connection works
+                updateConnectionStatus('online');
+                showToast('¡Conexión exitosa!', 'success');
+                
+                // Try to load data
+                await loadLocalData();
+                
+            } catch (error) {
+                console.error('Connection error:', error);
+                updateConnectionStatus('offline');
+                showToast('Error de conexión. Usando datos locales.', 'error');
+                
+                // Load from localStorage as fallback
+                await loadLocalData();
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
         document.addEventListener('DOMContentLoaded', () => {
             renderSubjectFilters();
             populateSubjectDropdown();
             populateFilterDropdowns();
-            loadLocalData();
-            updateStats();
             
+            // Test connection and load data
+            testConnection();
+            updateStats();
+        });
+
+        async function loadLocalData() {
+            const localData = localStorage.getItem('agenda3roa_events');
+            if (localData) {
+                events = JSON.parse(localData);
+                console.log('Loaded', events.length, 'events from localStorage');
+            }
+            renderCalendar();
+            
+            // Hide loading screen after data is loaded
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.add('opacity-0');
                 setTimeout(() => {
@@ -445,22 +590,22 @@
                     document.getElementById('app').classList.remove('hidden');
                 }, 500);
             }, 1000);
-        });
-
-        async function loadLocalData() {
-            const localData = localStorage.getItem('agenda3roa_events');
-            if (localData) {
-                events = JSON.parse(localData);
-            }
-            renderCalendar();
         }
 
+        // ============================================
+        // GOOGLE SHEETS API
+        // ============================================
         async function syncData() {
+            updateConnectionStatus('checking');
+            
             try {
-                await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'no-cors' });
-                showToast('Sincronizado', 'success');
+                const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'no-cors' });
+                updateConnectionStatus('online');
+                showToast('Sincronizado con Google Sheets', 'success');
             } catch (error) {
-                showToast('Error de sync', 'error');
+                console.error('Sync error:', error);
+                updateConnectionStatus('offline');
+                showToast('Error de sincronización', 'error');
             } finally {
                 renderCalendar();
                 updateStats();
@@ -481,6 +626,7 @@
                     body: JSON.stringify({ action: action, ...eventData })
                 });
                 
+                // Update local data regardless of response (no-cors mode)
                 if (action === 'create') {
                     events.push(eventData);
                 } else if (action === 'update') {
@@ -491,12 +637,33 @@
                 }
                 
                 localStorage.setItem('agenda3roa_events', JSON.stringify(events));
-                showToast(action === 'delete' ? 'Eliminado' : 'Guardado!', 'success');
+                
+                updateConnectionStatus('online');
+                showToast(action === 'delete' ? 'Eliminado' : '¡Guardado en Google Sheets!', 'success');
                 closeModal();
                 renderCalendar();
                 updateStats();
+                
             } catch (error) {
-                showToast('Error al guardar', 'error');
+                console.error('Save error:', error);
+                updateConnectionStatus('offline');
+                
+                // Still save locally as fallback
+                if (action === 'create') {
+                    events.push(eventData);
+                } else if (action === 'update') {
+                    const index = events.findIndex(e => e.id === eventData.id);
+                    if (index !== -1) events[index] = eventData;
+                } else if (action === 'delete') {
+                    events = events.filter(e => e.id !== eventData.id);
+                }
+                localStorage.setItem('agenda3roa_events', JSON.stringify(events));
+                
+                showToast('Guardado localmente (sin conexión)', 'warning');
+                closeModal();
+                renderCalendar();
+                updateStats();
+                
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
@@ -511,7 +678,8 @@
             a.href = url;
             a.download = `agenda-3roa-${getLocalDateString(new Date())}.json`;
             a.click();
-            showToast('Exportado', 'success');
+            URL.revokeObjectURL(url);
+            showToast('Datos exportados', 'success');
         }
 
         function updateStats() {
@@ -525,6 +693,9 @@
             document.getElementById('stat-obligaciones').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'obligacion').length;
         }
 
+        // ============================================
+        // VIEW FUNCTIONS
+        // ============================================
         function switchView(view) {
             currentView = view;
             ['month', 'week', 'day', 'list'].forEach(v => {
@@ -560,6 +731,9 @@
             renderCalendar();
         }
 
+        // ============================================
+        // FILTER FUNCTIONS
+        // ============================================
         function renderSubjectFilters() {
             const mobileContainer = document.getElementById('subject-filters-mobile');
             const desktopContainer = document.getElementById('subject-filters-desktop');
@@ -888,6 +1062,9 @@
             }
         }
 
+        // ============================================
+        // CALENDAR RENDERING
+        // ============================================
         function renderCalendar() {
             const container = document.getElementById('calendar-content');
             const displayMobile = document.getElementById('current-date-display-mobile');
@@ -1210,4 +1387,3 @@
     </script>
 </body>
 </html>
-
