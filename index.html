@@ -1,76 +1,56 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  background-color: white; /* Ensure the iframe has a white background */
-                }
-
-                
-              </style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda 3RO A | Colegio Fasta San Vicente de Paúl</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; min-height: 100vh; }
+        * { -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* Subject Colors */
-        .bg-math { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
-        .bg-lengua { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-        .bg-ingles { background-color: #e9d5ff; color: #6b21a8; border: 1px solid #d8b4fe; }
-        .bg-bio { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-        .bg-fisico { background-color: #fed7aa; color: #c2410c; border: 1px solid #fdba74; }
-        .bg-historia { background-color: #ffedd5; color: #9a3412; border: 1px solid #fdba74; }
-        .bg-construccion { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-        .bg-tecno { background-color: #cffafe; color: #0e7490; border: 1px solid #a5f3fc; }
-        .bg-teatro { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
-        .bg-comedor { background-color: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+        .bg-math { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .bg-lengua { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .bg-ingles { background: #e9d5ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+        .bg-bio { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .bg-fisico { background: #fed7aa; color: #c2410c; border: 1px solid #fdba74; }
+        .bg-historia { background: #ffedd5; color: #9a3412; border: 1px solid #fdba74; }
+        .bg-construccion { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+        .bg-tecno { background: #cffafe; color: #0e7490; border: 1px solid #a5f3fc; }
+        .bg-teatro { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .bg-comedor { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
         
-        .event-prueba { background-color: #fee2e2; border-left: 3px solid #ef4444; }
-        .event-tp { background-color: #dbeafe; border-left: 3px solid #3b82f6; }
-        .event-obligacion { background-color: #fef3c7; border-left: 3px solid #f59e0b; }
+        .event-prueba { background: #fee2e2; border-left: 3px solid #ef4444; }
+        .event-tp { background: #dbeafe; border-left: 3px solid #3b82f6; }
+        .event-obligacion { background: #fef3c7; border-left: 3px solid #f59e0b; }
         
-        .modal { transition: opacity 0.3s ease, visibility 0.3s ease; }
-        .modal-content { transition: transform 0.3s ease; }
+        .modal { transition: opacity 0.3s, visibility 0.3s; }
+        .modal-content { transition: transform 0.3s; }
         .modal-active .modal-content { transform: scale(1); }
         .modal:not(.modal-active) .modal-content { transform: scale(0.95); }
         
-        .toast { transform: translateY(100px); opacity: 0; transition: all 0.4s ease; }
+        .toast { transform: translateY(100px); opacity: 0; transition: all 0.4s; }
         .toast.show { transform: translateY(0); opacity: 1; }
         
         .spinner { animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
         .btn-press:active { transform: scale(0.96); }
-        .chip { transition: all 0.2s ease; }
-        .chip.selected { background-color: #2563eb; color: white; border-color: #2563eb; }
-        
+        .chip { transition: all 0.2s; }
+        .chip.selected { background: #2563eb; color: white; border-color: #2563eb; }
         .calendar-cell { min-height: 100px; }
         @media (max-width: 640px) { .calendar-cell { min-height: 75px; } }
     </style>
 </head>
 <body class="text-slate-800">
 
-    <!-- Loading Screen -->
     <div id="loading-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
         <div class="text-center p-8">
             <div class="w-20 h-20 mx-auto mb-6 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg spinner">
@@ -81,14 +61,13 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
     <div id="toast-container" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] space-y-2 w-full max-w-sm px-4"></div>
 
-    <!-- Main App -->
-    <div id="app" class="flex flex-col h-screen hidden">
+    <!-- App Container -->
+    <div id="app" class="flex h-screen hidden">
         
         <!-- Desktop Sidebar -->
-        <aside class="hidden lg:flex flex-col w-72 bg-white border-r border-slate-200">
+        <aside class="hidden lg:flex flex-col w-72 bg-white border-r border-slate-200 flex-shrink-0">
             <div class="p-6 border-b border-slate-100">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
@@ -135,11 +114,11 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 flex flex-col overflow-hidden">
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-hidden min-w-0">
             
             <!-- Mobile Header -->
-            <header class="lg:hidden bg-white border-b border-slate-200 z-30">
+            <header class="lg:hidden bg-white border-b border-slate-200 flex-shrink-0">
                 <div class="px-4 py-3">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
@@ -179,7 +158,7 @@
             </header>
 
             <!-- Desktop Header -->
-            <header class="hidden lg:flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
+            <header class="hidden lg:flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200 flex-shrink-0">
                 <div class="flex items-center gap-4">
                     <button onclick="changeDate(-1)" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-100 rounded-xl btn-press">
                         <i class="fa-solid fa-chevron-left"></i>
@@ -207,7 +186,7 @@
             </header>
 
             <!-- Mobile Filter Bar -->
-            <div class="lg:hidden border-b border-slate-200 bg-white">
+            <div class="lg:hidden border-b border-slate-200 bg-white flex-shrink-0">
                 <div class="px-4 py-3 overflow-x-auto hide-scrollbar">
                     <div class="flex items-center gap-2">
                         <button onclick="resetFilters()" class="flex-shrink-0 px-4 py-2 bg-slate-100 text-slate-600 rounded-full text-xs font-semibold border chip">Todas</button>
@@ -220,7 +199,7 @@
             <div class="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-6">
                 <div id="calendar-content" class="bg-white rounded-xl shadow-sm border overflow-hidden"></div>
             </div>
-        </main>
+        </div>
     </div>
 
     <!-- Create/Edit Modal -->
@@ -247,7 +226,6 @@
                 <form id="event-form" onsubmit="handleFormSubmit(event)">
                     <input type="hidden" id="event-id">
                     
-                    <!-- Type -->
                     <div class="mb-5">
                         <label class="block text-xs font-semibold text-slate-500 uppercase mb-3">Tipo</label>
                         <div class="grid grid-cols-3 gap-3">
@@ -275,7 +253,6 @@
                         </div>
                     </div>
 
-                    <!-- Date -->
                     <div class="mb-5">
                         <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Fecha</label>
                         <input type="date" id="event-date-input" required onchange="onDateChange()" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none">
@@ -285,7 +262,6 @@
                         </div>
                     </div>
 
-                    <!-- Subject & Time -->
                     <div class="grid grid-cols-2 gap-4 mb-5">
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Materia</label>
@@ -301,13 +277,11 @@
                         </div>
                     </div>
 
-                    <!-- Title -->
                     <div class="mb-5">
                         <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Título</label>
                         <input type="text" id="event-title" required class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none" placeholder="Ej: Examen">
                     </div>
 
-                    <!-- Modality -->
                     <div id="modality-group" class="mb-5 p-4 bg-red-50 rounded-xl border border-red-100">
                         <label class="block text-xs font-semibold text-red-700 uppercase mb-3">Modalidad</label>
                         <div class="flex gap-4">
@@ -317,13 +291,11 @@
                         </div>
                     </div>
 
-                    <!-- Topics -->
                     <div class="mb-5">
                         <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Temas</label>
                         <textarea id="event-topics" rows="3" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none resize-none" placeholder="Unidad 1, 2..."></textarea>
                     </div>
 
-                    <!-- Drive Link -->
                     <div class="mb-6">
                         <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Google Drive</label>
                         <input type="url" id="event-file-url" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none" placeholder="https://drive.google.com/...">
@@ -332,7 +304,6 @@
                         </div>
                     </div>
 
-                    <!-- Buttons -->
                     <button type="submit" id="submit-btn" class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold btn-press mb-3">
                         <i class="fa-solid fa-cloud-arrow-up mr-2"></i>Guardar
                     </button>
@@ -390,14 +361,8 @@
     </div>
 
     <script>
-        // ============================================
-        // CONFIGURATION
-        // ============================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4shbJRTlAkUYjr3gMd2HBFP4Ox8PlRNexE-E3HeHmhXhpQkYGsFS2gbNaxl0ZWGU/exec';
         
-        // ============================================
-        // DATA
-        // ============================================
         const subjectsConfig = {
             'MATEMATICA': { color: 'bg-math', icon: 'fa-calculator', label: 'Matemática' },
             'MATEMÁTICA': { color: 'bg-math', icon: 'fa-calculator', label: 'Matemática' },
@@ -420,7 +385,6 @@
             'COMEDOR': { color: 'bg-comedor', icon: 'fa-utensils', label: 'Comedor' }
         };
 
-        // Timetable: Index 0=Lunes, 1=Martes, 2=Miércoles, 3=Jueves, 4=Viernes
         const timetable = [
             ['GEOGRAFÍA', 'BIOLOGÍA', 'CONSTRUCCIÓN', 'HISTORIA', '', 'ED FÍSICA', '', '', '', '', ''],
             ['MATEMATICA', 'GEOGRAFÍA', 'FOR DOC', 'PDL', 'BIOLOGÍA', 'FISÍCO QUÍMICA', '', '', '', '', ''],
@@ -440,11 +404,6 @@
         let selectedDayForModal = null;
         let listFilters = { month: 'all', subject: 'all', types: ['prueba', 'tp', 'obligacion'], sort: 'asc' };
 
-        // ============================================
-        // DATE UTILITIES - FIXED TIMEZONE ISSUES
-        // ============================================
-        
-        // Get local date string without timezone issues
         function getLocalDateString(date) {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -452,43 +411,31 @@
             return `${year}-${month}-${day}`;
         }
 
-        // Parse date string to local date (no timezone shift)
         function parseLocalDate(dateString) {
             const [year, month, day] = dateString.split('-').map(Number);
             return new Date(year, month - 1, day);
         }
 
-        // Get day of week (0=Sunday, 1=Monday, ..., 6=Saturday)
         function getDayOfWeek(dateString) {
             const date = parseLocalDate(dateString);
             return date.getDay();
         }
 
-        // Check if weekend (Saturday=6 or Sunday=0)
         function isWeekend(dateString) {
             const day = getDayOfWeek(dateString);
             return day === 0 || day === 6;
         }
 
-        // Get timetable index from date string (0=Monday, 4=Friday)
         function getTimetableIndex(dateString) {
             const day = getDayOfWeek(dateString);
-            // Monday=1 -> 0, Tuesday=2 -> 1, ..., Friday=5 -> 4
             return day - 1;
         }
 
-        // ============================================
-        // INITIALIZATION
-        // ============================================
         document.addEventListener('DOMContentLoaded', () => {
-            initializeApp();
-        });
-
-        async function initializeApp() {
             renderSubjectFilters();
             populateSubjectDropdown();
             populateFilterDropdowns();
-            await loadDataFromGoogleSheets();
+            loadLocalData();
             updateStats();
             
             setTimeout(() => {
@@ -498,25 +445,25 @@
                     document.getElementById('app').classList.remove('hidden');
                 }, 500);
             }, 1000);
+        });
+
+        async function loadLocalData() {
+            const localData = localStorage.getItem('agenda3roa_events');
+            if (localData) {
+                events = JSON.parse(localData);
+            }
+            renderCalendar();
         }
 
-        // ============================================
-        // GOOGLE SHEETS API
-        // ============================================
-        async function loadDataFromGoogleSheets() {
+        async function syncData() {
             try {
                 await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'no-cors' });
-                const localData = localStorage.getItem('agenda3roa_events');
-                if (localData) {
-                    events = JSON.parse(localData);
-                    showToast('Datos cargados', 'success');
-                }
+                showToast('Sincronizado', 'success');
             } catch (error) {
-                console.error('Error:', error);
-                const localData = localStorage.getItem('agenda3roa_events');
-                if (localData) events = JSON.parse(localData);
+                showToast('Error de sync', 'error');
             } finally {
                 renderCalendar();
+                updateStats();
             }
         }
 
@@ -556,18 +503,6 @@
             }
         }
 
-        async function syncData() {
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'no-cors' });
-                showToast('Sincronizado', 'success');
-            } catch (error) {
-                showToast('Error de sync', 'error');
-            } finally {
-                renderCalendar();
-                updateStats();
-            }
-        }
-
         function exportData() {
             const dataStr = JSON.stringify(events, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
@@ -590,9 +525,6 @@
             document.getElementById('stat-obligaciones').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'obligacion').length;
         }
 
-        // ============================================
-        // VIEW FUNCTIONS
-        // ============================================
         function switchView(view) {
             currentView = view;
             ['month', 'week', 'day', 'list'].forEach(v => {
@@ -628,9 +560,6 @@
             renderCalendar();
         }
 
-        // ============================================
-        // FILTER FUNCTIONS
-        // ============================================
         function renderSubjectFilters() {
             const mobileContainer = document.getElementById('subject-filters-mobile');
             const desktopContainer = document.getElementById('subject-filters-desktop');
@@ -695,38 +624,24 @@
             }
         }
 
-        // ============================================
-        // DATE & TIME SLOT - FIXED!
-        // ============================================
         function onDateChange() {
             const dateInput = document.getElementById('event-date-input').value;
             if (!dateInput) return;
             
-            // DEBUG: Log the date and day
-            console.log('Date selected:', dateInput);
-            console.log('Day of week:', getDayOfWeek(dateInput), '(', dayNames[getDayOfWeek(dateInput)], ')');
-            console.log('Is weekend?', isWeekend(dateInput));
-            
             const preview = document.getElementById('day-schedule-preview');
             const slotsContainer = document.getElementById('schedule-slots');
             
-            // CORRECT: Weekend is Saturday (6) or Sunday (0)
             if (isWeekend(dateInput)) {
                 preview.classList.remove('hidden');
-                slotsContainer.innerHTML = `
-                    <div class="col-span-full p-4 bg-slate-100 rounded-xl text-center">
-                        <i class="fa-solid fa-calendar-xmark text-3xl text-slate-400 mb-2"></i>
-                        <p class="text-sm font-medium text-slate-500">No hay clases los fines de semana</p>
-                    </div>
-                `;
+                slotsContainer.innerHTML = `<div class="col-span-full p-4 bg-slate-100 rounded-xl text-center">
+                    <i class="fa-solid fa-calendar-xmark text-3xl text-slate-400 mb-2"></i>
+                    <p class="text-sm font-medium text-slate-500">No hay clases los fines de semana</p>
+                </div>`;
                 document.getElementById('event-time').innerHTML = '<option value="">Sin horarios</option>';
                 return;
             }
             
-            // Get timetable index (0=Monday, 4=Friday)
             const timetableIndex = getTimetableIndex(dateInput);
-            console.log('Timetable index:', timetableIndex);
-            
             const daySchedule = timetable[timetableIndex];
             preview.classList.remove('hidden');
             
@@ -734,15 +649,13 @@
             let timeOptions = '<option value="">Seleccionar...</option>';
             
             daySchedule.forEach((subject, slotIndex) => {
-                if (subject && subjectsConfig[subject]) { // Only subjects that can have assignments
+                if (subject && subjectsConfig[subject]) {
                     const config = subjectsConfig[subject];
                     const timeLabel = timeLabels[slotIndex];
-                    slotsHtml += `
-                        <button type="button" onclick="selectTimeSlot('${timetableIndex}-${slotIndex}', '${subject}')" class="time-slot p-3 border-2 border-slate-200 rounded-xl text-left hover:border-blue-300">
-                            <div class="text-[10px] text-slate-400">${timeLabel}</div>
-                            <div class="text-xs font-semibold ${config.color.split(' ')[1]}">${subject}</div>
-                        </button>
-                    `;
+                    slotsHtml += `<button type="button" onclick="selectTimeSlot('${timetableIndex}-${slotIndex}', '${subject}')" class="time-slot p-3 border-2 border-slate-200 rounded-xl text-left hover:border-blue-300">
+                        <div class="text-[10px] text-slate-400">${timeLabel}</div>
+                        <div class="text-xs font-semibold ${config.color.split(' ')[1]}">${subject}</div>
+                    </button>`;
                     timeOptions += `<option value="${timetableIndex}-${slotIndex}">${subject} - ${timeLabel}</option>`;
                 }
             });
@@ -801,14 +714,10 @@
             document.getElementById('modality-group').style.display = show ? 'block' : 'none';
         }
 
-        // ============================================
-        // GOOGLE CALENDAR
-        // ============================================
         function addToGoogleCalendar() {
             const title = document.getElementById('event-title').value;
             const date = document.getElementById('event-date-input').value;
             const topics = document.getElementById('event-topics').value;
-            const subject = document.getElementById('event-subject').value;
             
             if (!title || !date) {
                 showToast('Completa título y fecha', 'error');
@@ -831,9 +740,6 @@
             window.open(url, '_blank');
         }
 
-        // ============================================
-        // MODAL FUNCTIONS
-        // ============================================
         function openCreateModal(dateStr = null, eventId = null) {
             const modal = document.getElementById('event-modal');
             document.getElementById('event-form').reset();
@@ -919,9 +825,6 @@
             modal.classList.add('opacity-0', 'pointer-events-none');
         }
 
-        // ============================================
-        // LIST FILTERS
-        // ============================================
         function toggleTypeFilter(type) {
             const btn = document.getElementById(`filter-${type}`);
             const index = listFilters.types.indexOf(type);
@@ -953,9 +856,6 @@
             applyListFilters();
         }
 
-        // ============================================
-        // FORM SUBMISSION
-        // ============================================
         function handleFormSubmit(e) {
             e.preventDefault();
             
@@ -988,9 +888,6 @@
             }
         }
 
-        // ============================================
-        // CALENDAR RENDERING
-        // ============================================
         function renderCalendar() {
             const container = document.getElementById('calendar-content');
             const displayMobile = document.getElementById('current-date-display-mobile');
@@ -1146,7 +1043,6 @@
             const container = document.getElementById('day-view-content');
             const dayOfWeek = getDayOfWeek(dateStr);
             
-            // CORRECT: Weekend is Saturday (6) or Sunday (0)
             if (dayOfWeek === 0 || dayOfWeek === 6) {
                 container.innerHTML = `<div class="text-center py-12">
                     <div class="w-20 h-20 mx-auto mb-6 bg-slate-100 rounded-full flex items-center justify-center">
@@ -1293,9 +1189,6 @@
             container.innerHTML = html;
         }
 
-        // ============================================
-        // TOAST
-        // ============================================
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -1318,34 +1211,3 @@
 </body>
 </html>
 
-
-
-              <script>
-                              // Funciones auxiliares para manejo LOCAL de fechas (sin timezone)
-function getLocalDateString(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-
-function parseLocalDate(dateString) {
-    const [year, month, day] = dateString.split('-').map(Number);
-    return new Date(year, month - 1, day); // Constructor local, no UTC
-}
-
-function getDayOfWeek(dateString) {
-    const date = parseLocalDate(dateString);
-    return date.getDay(); // 0=Domingo, 1=Lunes, ..., 6=Sábado
-}
-
-function isWeekend(dateString) {
-    const day = getDayOfWeek(dateString);
-    return day === 0 || day === 6; // Domingo o Sábado
-}
-
-
-              </script>
-                        </body>
-                        </html>
-                    
