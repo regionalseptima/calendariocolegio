@@ -217,6 +217,7 @@ body { font-family: 'Inter', sans-serif; background: #f8fafc; }
 </div>
 </div>
 
+<!-- Modales (same as before) -->
 <div id="event-modal" class="modal opacity-0 pointer-events-none fixed inset-0 z-50 flex items-end lg:items-center justify-center">
 <div class="modal-overlay absolute inset-0 bg-slate-900/50" onclick="closeModal()"></div>
 <div class="modal-content bg-white w-full lg:max-w-2xl lg:rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col h-[95vh] lg:h-auto">
@@ -441,7 +442,7 @@ return new Date();
 }
 }
 
-// NUEVA FUNCIÓN: Normalizar fecha para comparación
+// NUEVA FUNCIÓN CRÍTICA: Normalizar fecha para comparación
 function normalizeDate(dateStr) {
 if (!dateStr) return '';
 try {
@@ -502,9 +503,6 @@ if (app) app.classList.remove('hidden');
 }, 1000);
 }
 
-// ============================================
-// GOOGLE SHEETS API - CON DEBUG MEJORADO
-// ============================================
 window.handleData = function(response) {
 console.log('✅ handleData called:', response);
 console.log('📊 Raw data:', response.data);
@@ -514,7 +512,6 @@ try {
 if (response && response.success) {
 events = response.data || [];
 
-// Debug: Log all events with their dates
 if (events.length > 0) {
 console.log('🔍 All events:');
 events.forEach((e, i) => {
@@ -530,7 +527,6 @@ localStorage.setItem('agenda3roa_last_sync', new Date().toISOString());
 
 showToast(`Datos sincronizados (${events.length} eventos)`, 'success');
 
-// Forzar renderizado después de cargar datos
 setTimeout(() => {
 renderCalendar();
 updateStats();
@@ -557,7 +553,7 @@ events = JSON.parse(cached);
 console.log('📦 Loaded', events.length, 'events from localStorage');
 showToast('Usando datos en caché', 'warning');
 } catch (e) {
-console.error('❌ Error parsing cached data:', e);
+console.error('❌ Error parsing cached ', e);
 events = [];
 }
 } else {
@@ -608,7 +604,6 @@ const originalText = submitBtn.innerHTML;
 submitBtn.disabled = true;
 submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch spinner"></i> Guardando...';
 
-// Normalizar fecha
 if (eventData.fecha) {
 const dateParts = eventData.fecha.split('T')[0].split('-');
 if (dateParts.length === 3) {
@@ -639,7 +634,6 @@ updateConnectionStatus('online');
 showToast(action === 'delete' ? 'Eliminado' : '¡Guardado!', 'success');
 closeModal();
 
-// Forzar recarga desde Google Sheets después de guardar
 setTimeout(() => {
 syncWithSheets();
 }, 500);
@@ -1067,7 +1061,7 @@ renderListView();
 }
 
 // ============================================
-// GET EVENTS FOR DATE - CORREGIDA PARA COMPARAR FECHAS NORMALIZADAS
+// GET EVENTS FOR DATE - CORREGIDA CON normalizeDate
 // ============================================
 function getEventsForDate(date) {
 const targetDateStr = normalizeDate(date);
@@ -1284,11 +1278,8 @@ filtered = filtered.filter(e => (e.materia || e.subject) === listFilters.subject
 }
 filtered = filtered.filter(e => listFilters.types.includes(e.tipo || e.type));
 filtered.sort((a, b) => {
-const aStr = a.fecha || a.date;
-const bStr = b.fecha || b.date;
-if (!aStr || !bStr) return 0;
-const aDate = parseLocalDate(aStr);
-const bDate = parseLocalDate(bStr);
+const aDate = parseLocalDate(a.fecha || a.date);
+const bDate = parseLocalDate(b.fecha || b.date);
 return listFilters.sort === 'asc' ? aDate - bDate : bDate - aDate;
 });
 if (filtered.length === 0) {
