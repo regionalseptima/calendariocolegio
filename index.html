@@ -86,7 +86,7 @@
                 <span class="status-dot checking"></span>
                 <span id="loading-text">Conectando...</span>
             </div>
-            <p id="loading-subtext" class="text-xs text-slate-400 mt-3">Cargando datos de Google Sheets...</p>
+            <p id="loading-subtext" class="text-xs text-slate-400 mt-3">Cargando datos...</p>
         </div>
     </div>
 
@@ -416,9 +416,9 @@
 
     <script>
         // ============================================
-        // CONFIGURATION - REEMPLAZÁ CON TU NUEVA URL
+        // CONFIGURATION
         // ============================================
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdByY0sbg7qP2RBc7MifuOCVmW2F7w4oBdi0MJvU0dKs8YKn4kiOcW1ooM1BlvDY4/exec;
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdByY0sbg7qP2RBc7MifuOCVmW2F7w4oBdi0MJvU0dKs8YKn4kiOcW1ooM1BlvDY4/exec';
         
         let isConnected = false;
         let isLoadingComplete = false;
@@ -465,9 +465,10 @@
         let listFilters = { month: 'all', subject: 'all', types: ['prueba', 'tp', 'obligacion'], sort: 'asc' };
 
         // ============================================
-        // DATE UTILITIES
+        // DATE UTILITIES - CORREGIDAS
         // ============================================
         function getLocalDateString(date) {
+            if (!date) return '';
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
@@ -475,13 +476,18 @@
         }
 
         function parseLocalDate(dateString) {
-    if (!dateString) {
-        console.warn('⚠️ Invalid date:', dateString);
-        return new Date(); // Return today as fallback
-    }
-    const [year, month, day] = dateString.split('-').map(Number);
-    return new Date(year, month - 1, day);
-}
+            if (!dateString) {
+                console.warn('⚠️ Invalid date:', dateString);
+                return new Date();
+            }
+            try {
+                const [year, month, day] = dateString.split('-').map(Number);
+                return new Date(year, month - 1, day);
+            } catch (error) {
+                console.error('❌ Error parsing date:', dateString, error);
+                return new Date();
+            }
+        }
 
         function getDayOfWeek(dateString) {
             const date = parseLocalDate(dateString);
@@ -548,7 +554,6 @@
         // GOOGLE SHEETS API - JSONP
         // ============================================
         
-        // Callback function for JSONP responses
         window.handleData = function(response) {
             console.log('✅ handleData called:', response);
             
@@ -574,23 +579,26 @@
             }
             
             renderCalendar();
-            function updateStats() {
-    const now = new Date();
-    const thisMonth = events.filter(e => {
-        const dateStr = e.fecha || e.date;
-        if (!dateStr) return false; // Skip events without date
-        try {
-            const eDate = parseLocalDate(dateStr);
-            return eDate.getMonth() === now.getMonth() && eDate.getFullYear() === now.getFullYear();
-        } catch (error) {
-            console.warn('⚠️ Invalid date in event:', e);
-            return false;
+            updateStats();
+            hideLoadingScreen();
+        };
+
+        function loadFromLocalStorage() {
+            const cached = localStorage.getItem('agenda3roa_events');
+            if (cached) {
+                try {
+                    events = JSON.parse(cached);
+                    console.log('📦 Loaded', events.length, 'events from localStorage');
+                    showToast('Usando datos en caché', 'warning');
+                } catch (e) {
+                    console.error('❌ Error parsing cached data:', e);
+                    events = [];
+                }
+            } else {
+                console.log('📭 No cached data found');
+                events = [];
+            }
         }
-    });
-    document.getElementById('stat-pruebas').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'prueba').length;
-    document.getElementById('stat-tps').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'tp').length;
-    document.getElementById('stat-obligaciones').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'obligacion').length;
-}
 
         function syncWithSheets() {
             console.log('🔄 Starting sync with Google Sheets...');
@@ -601,11 +609,9 @@
             if (loadingText) loadingText.textContent = 'Conectando...';
             if (loadingSubtext) loadingSubtext.textContent = 'Descargando datos...';
             
-            // Remove existing script tags
             const existingScripts = document.querySelectorAll('script[data-gsheets="true"]');
             existingScripts.forEach(s => s.remove());
             
-            // Create new script element for JSONP
             const script = document.createElement('script');
             script.setAttribute('data-gsheets', 'true');
             const timestamp = new Date().getTime();
@@ -628,7 +634,6 @@
             document.body.appendChild(script);
             console.log('📜 Script tag added:', script.src);
             
-            // Timeout fallback
             setTimeout(() => {
                 if (!isLoadingComplete) {
                     console.warn('⏱️ Timeout - forcing load from cache');
@@ -729,17 +734,30 @@
             input.value = '';
         }
 
+        // ============================================
+        // UPDATE STATS - CORREGIDA
+        // ============================================
         function updateStats() {
             const now = new Date();
             const thisMonth = events.filter(e => {
-                const eDate = parseLocalDate(e.fecha || e.date);
-                return eDate.getMonth() === now.getMonth() && eDate.getFullYear() === now.getFullYear();
+                const dateStr = e.fecha || e.date;
+                if (!dateStr) return false;
+                try {
+                    const eDate = parseLocalDate(dateStr);
+                    return eDate.getMonth() === now.getMonth() && eDate.getFullYear() === now.getFullYear();
+                } catch (error) {
+                    console.warn('⚠️ Invalid date in event:', e);
+                    return false;
+                }
             });
             document.getElementById('stat-pruebas').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'prueba').length;
             document.getElementById('stat-tps').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'tp').length;
             document.getElementById('stat-obligaciones').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'obligacion').length;
         }
 
+        // ============================================
+        // VIEW FUNCTIONS
+        // ============================================
         function switchView(view) {
             currentView = view;
             ['month', 'week', 'day', 'list'].forEach(v => {
@@ -1103,6 +1121,9 @@
             }
         }
 
+        // ============================================
+        // CALENDAR RENDERING
+        // ============================================
         function renderCalendar() {
             const container = document.getElementById('calendar-content');
             const displayMobile = document.getElementById('current-date-display-mobile');
@@ -1121,18 +1142,21 @@
             }
         }
 
+        // ============================================
+        // GET EVENTS FOR DATE - CORREGIDA
+        // ============================================
         function getEventsForDate(date) {
-    const dateStr = getLocalDateString(date);
-    let dayEvents = events.filter(e => {
-        const eventDate = e.fecha || e.date;
-        if (!eventDate) return false; // Skip events without date
-        return eventDate === dateStr;
-    });
-    if (activeFilter) {
-        dayEvents = dayEvents.filter(e => e.materia === activeFilter || e.subject === activeFilter);
-    }
-    return dayEvents;
-}
+            const dateStr = getLocalDateString(date);
+            let dayEvents = events.filter(e => {
+                const eventDate = e.fecha || e.date;
+                if (!eventDate) return false;
+                return eventDate === dateStr;
+            });
+            if (activeFilter) {
+                dayEvents = dayEvents.filter(e => e.materia === activeFilter || e.subject === activeFilter);
+            }
+            return dayEvents;
+        }
 
         function renderMonthView(container) {
             const year = currentDate.getFullYear();
@@ -1341,7 +1365,9 @@
             
             if (listFilters.month !== 'all') {
                 filtered = filtered.filter(e => {
-                    const d = parseLocalDate(e.fecha || e.date);
+                    const dateStr = e.fecha || e.date;
+                    if (!dateStr) return false;
+                    const d = parseLocalDate(dateStr);
                     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` === listFilters.month;
                 });
             }
@@ -1353,8 +1379,11 @@
             filtered = filtered.filter(e => listFilters.types.includes(e.tipo || e.type));
             
             filtered.sort((a, b) => {
-                const aDate = parseLocalDate(a.fecha || a.date);
-                const bDate = parseLocalDate(b.fecha || b.date);
+                const aStr = a.fecha || a.date;
+                const bStr = b.fecha || b.date;
+                if (!aStr || !bStr) return 0;
+                const aDate = parseLocalDate(aStr);
+                const bDate = parseLocalDate(bStr);
                 return listFilters.sort === 'asc' ? aDate - bDate : bDate - aDate;
             });
 
@@ -1368,7 +1397,8 @@
 
             let html = '<div class="divide-y">';
             filtered.forEach(e => {
-                const d = parseLocalDate(e.fecha || e.date);
+                const dateStr = e.fecha || e.date;
+                const d = dateStr ? parseLocalDate(dateStr) : new Date();
                 const tipo = e.tipo || e.type;
                 const materia = e.materia || e.subject;
                 
