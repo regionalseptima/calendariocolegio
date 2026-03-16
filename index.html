@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Agenda 3RO A | Colegio Fasta San Vicente de Paúl</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -61,15 +61,10 @@
         .connection-status.offline { background: #fee2e2; color: #991b1b; }
         .connection-status.checking { background: #fef3c7; color: #92400e; }
         
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
         .status-dot.online { background: #22c55e; }
         .status-dot.offline { background: #ef4444; }
-        .status-dot.checking { background: #eab308; }
+        .status-dot.checking { background: #eab308; animation: pulse 1.5s infinite; }
         
         @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -89,8 +84,9 @@
             <p class="text-slate-500 mb-4">Colegio Fasta San Vicente de Paúl</p>
             <div id="connection-status-loading" class="connection-status checking">
                 <span class="status-dot checking"></span>
-                <span>Verificando conexión...</span>
+                <span>Conectando con Google Sheets...</span>
             </div>
+            <p class="text-xs text-slate-400 mt-3">Sincronización en tiempo real</p>
         </div>
     </div>
 
@@ -117,14 +113,14 @@
             <!-- Connection Status -->
             <div class="p-4 bg-slate-50 border-b border-slate-100">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-semibold text-slate-500 uppercase">Conexión</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Google Sheets</span>
                     <div id="connection-status-sidebar" class="connection-status checking">
                         <span class="status-dot checking"></span>
-                        <span>Verificando...</span>
+                        <span>Conectando...</span>
                     </div>
                 </div>
-                <button onclick="testConnection()" class="w-full py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium btn-press">
-                    <i class="fa-solid fa-wifi mr-1"></i>Probar Conexión
+                <button onclick="syncWithSheets()" class="w-full py-2 bg-blue-50 border border-blue-200 rounded-lg text-xs font-medium text-blue-600 btn-press">
+                    <i class="fa-solid fa-rotate mr-1"></i>Sincronizar
                 </button>
             </div>
             
@@ -154,14 +150,15 @@
             
             <!-- Actions -->
             <div class="p-4 border-t border-slate-100 bg-slate-50">
-                <div class="flex gap-2">
-                    <button onclick="syncData()" class="flex-1 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium btn-press">
-                        <i class="fa-solid fa-rotate mr-1"></i>Sincronizar
-                    </button>
-                    <button onclick="exportData()" class="flex-1 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium btn-press">
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="exportData()" class="py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium btn-press">
                         <i class="fa-solid fa-download mr-1"></i>Exportar
                     </button>
+                    <button onclick="document.getElementById('import-file').click()" class="py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium btn-press">
+                        <i class="fa-solid fa-upload mr-1"></i>Importar
+                    </button>
                 </div>
+                <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(this)">
             </div>
         </aside>
 
@@ -182,8 +179,8 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="testConnection()" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 btn-press" title="Probar conexión">
-                                <i class="fa-solid fa-wifi text-sm"></i>
+                            <button onclick="syncWithSheets()" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 btn-press" title="Sincronizar">
+                                <i class="fa-solid fa-rotate text-sm"></i>
                             </button>
                             <button onclick="openCreateModal()" class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white btn-press">
                                 <i class="fa-solid fa-plus text-sm"></i>
@@ -194,7 +191,7 @@
                     <!-- Connection Status Mobile -->
                     <div id="connection-status-mobile" class="connection-status checking mb-3">
                         <span class="status-dot checking"></span>
-                        <span>Verificando...</span>
+                        <span>Conectando...</span>
                     </div>
                     
                     <div class="flex items-center justify-between bg-slate-100 rounded-xl p-1">
@@ -367,7 +364,7 @@
                     </div>
 
                     <button type="submit" id="submit-btn" class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold btn-press mb-3">
-                        <i class="fa-solid fa-cloud-arrow-up mr-2"></i>Guardar
+                        <i class="fa-solid fa-cloud-arrow-up mr-2"></i>Guardar en Google Sheets
                     </button>
                     <button type="button" onclick="addToGoogleCalendar()" class="w-full py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl font-semibold btn-press">
                         <i class="fa-brands fa-google mr-2"></i>Google Calendar
@@ -424,9 +421,9 @@
 
     <script>
         // ============================================
-        // CONFIGURATION
+        // CONFIGURATION - TU URL ACTUALIZADA
         // ============================================
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4shbJRTlAkUYjr3gMd2HBFP4Ox8PlRNexE-E3HeHmhXhpQkYGsFS2gbNaxl0ZWGU/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhQR18KUCrYmYZb1l_S4lHzQN2tqJOsY4Pe8POPhlmJB7MI0YljiEbFXaFJx9ROV_3/exec';
         
         let isConnected = false;
         
@@ -521,68 +518,38 @@
                     dot.className = `status-dot ${status}`;
                     if (status === 'online') text.textContent = 'En línea';
                     else if (status === 'offline') text.textContent = 'Sin conexión';
-                    else if (status === 'checking') text.textContent = 'Verificando...';
+                    else if (status === 'checking') text.textContent = 'Conectando...';
                 }
             });
             
             isConnected = status === 'online';
         }
 
-        async function testConnection() {
-            updateConnectionStatus('checking');
-            showToast('Probando conexión...', 'warning');
+        // ============================================
+        // GOOGLE SHEETS API - JSONP PARA MÓVILES
+        // ============================================
+        
+        // Callback function for JSONP responses (GET)
+        window.handleData = function(response) {
+            console.log('✅ Datos recibidos de Google Sheets:', response);
             
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
-                
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'GET',
-                    mode: 'no-cors',
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                
-                // With no-cors, we can't read the response, but if we get here, connection works
+            if (response && response.success && response.data) {
+                events = response.data;
                 updateConnectionStatus('online');
-                showToast('¡Conexión exitosa!', 'success');
+                showToast('Datos sincronizados', 'success');
                 
-                // Try to load data
-                await loadLocalData();
-                
-            } catch (error) {
-                console.error('Connection error:', error);
+                // Save to localStorage as backup cache
+                localStorage.setItem('agenda3roa_events', JSON.stringify(events));
+                localStorage.setItem('agenda3roa_last_sync', new Date().toISOString());
+            } else {
                 updateConnectionStatus('offline');
-                showToast('Error de conexión. Usando datos locales.', 'error');
-                
-                // Load from localStorage as fallback
-                await loadLocalData();
+                showToast('Error al cargar datos', 'error');
             }
-        }
-
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            renderSubjectFilters();
-            populateSubjectDropdown();
-            populateFilterDropdowns();
             
-            // Test connection and load data
-            testConnection();
-            updateStats();
-        });
-
-        async function loadLocalData() {
-            const localData = localStorage.getItem('agenda3roa_events');
-            if (localData) {
-                events = JSON.parse(localData);
-                console.log('Loaded', events.length, 'events from localStorage');
-            }
             renderCalendar();
+            updateStats();
             
-            // Hide loading screen after data is loaded
+            // Hide loading screen
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.add('opacity-0');
                 setTimeout(() => {
@@ -590,28 +557,51 @@
                     document.getElementById('app').classList.remove('hidden');
                 }, 500);
             }, 1000);
-        }
+        };
 
-        // ============================================
-        // GOOGLE SHEETS API
-        // ============================================
-        async function syncData() {
+        // Load data from Google Sheets using JSONP (works on mobile)
+        function syncWithSheets() {
             updateConnectionStatus('checking');
+            showToast('Sincronizando...', 'warning');
             
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'no-cors' });
-                updateConnectionStatus('online');
-                showToast('Sincronizado con Google Sheets', 'success');
-            } catch (error) {
-                console.error('Sync error:', error);
+            // Create script element for JSONP
+            const script = document.createElement('script');
+            const timestamp = new Date().getTime();
+            script.src = `${GOOGLE_SCRIPT_URL}?callback=handleData&_t=${timestamp}`;
+            
+            script.onerror = function() {
+                console.error('❌ Error loading from Google Sheets');
                 updateConnectionStatus('offline');
-                showToast('Error de sincronización', 'error');
-            } finally {
-                renderCalendar();
-                updateStats();
-            }
+                showToast('Error de conexión', 'error');
+                
+                // Try to load from localStorage cache
+                const cached = localStorage.getItem('agenda3roa_events');
+                if (cached) {
+                    events = JSON.parse(cached);
+                    renderCalendar();
+                    updateStats();
+                    showToast('Usando datos en caché', 'warning');
+                }
+                
+                // Hide loading screen
+                setTimeout(() => {
+                    document.getElementById('loading-screen').classList.add('opacity-0');
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').classList.add('hidden');
+                        document.getElementById('app').classList.remove('hidden');
+                    }, 500);
+                }, 1000);
+            };
+            
+            document.body.appendChild(script);
+            
+            // Remove script after loading
+            script.onload = function() {
+                document.body.removeChild(script);
+            };
         }
 
+        // Save data to Google Sheets
         async function saveToGoogleSheets(eventData, action = 'create') {
             const submitBtn = document.getElementById('submit-btn');
             const originalText = submitBtn.innerHTML;
@@ -619,14 +609,14 @@
             submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch spinner"></i> Guardando...';
             
             try {
-                await fetch(GOOGLE_SCRIPT_URL, {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: action, ...eventData })
                 });
                 
-                // Update local data regardless of response (no-cors mode)
+                // Update local data
                 if (action === 'create') {
                     events.push(eventData);
                 } else if (action === 'update') {
@@ -636,7 +626,9 @@
                     events = events.filter(e => e.id !== eventData.id);
                 }
                 
+                // Save to localStorage as cache
                 localStorage.setItem('agenda3roa_events', JSON.stringify(events));
+                localStorage.setItem('agenda3roa_last_sync', new Date().toISOString());
                 
                 updateConnectionStatus('online');
                 showToast(action === 'delete' ? 'Eliminado' : '¡Guardado en Google Sheets!', 'success');
@@ -646,9 +638,8 @@
                 
             } catch (error) {
                 console.error('Save error:', error);
-                updateConnectionStatus('offline');
                 
-                // Still save locally as fallback
+                // Still save locally
                 if (action === 'create') {
                     events.push(eventData);
                 } else if (action === 'update') {
@@ -659,7 +650,7 @@
                 }
                 localStorage.setItem('agenda3roa_events', JSON.stringify(events));
                 
-                showToast('Guardado localmente (sin conexión)', 'warning');
+                showToast('Guardado localmente', 'warning');
                 closeModal();
                 renderCalendar();
                 updateStats();
@@ -680,6 +671,27 @@
             a.click();
             URL.revokeObjectURL(url);
             showToast('Datos exportados', 'success');
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    events = imported;
+                    localStorage.setItem('agenda3roa_events', JSON.stringify(events));
+                    renderCalendar();
+                    updateStats();
+                    showToast('Datos importados', 'success');
+                } catch (error) {
+                    showToast('Error al importar', 'error');
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
         }
 
         function updateStats() {
@@ -1384,6 +1396,12 @@
                 setTimeout(() => toast.remove(), 400);
             }, 3000);
         }
+
+        // ============================================
+        // INITIAL SYNC
+        // ============================================
+        // Start sync when page loads
+        syncWithSheets();
     </script>
 </body>
 </html>
