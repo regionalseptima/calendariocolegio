@@ -1,329 +1,1351 @@
-<!DOCTYPE html>
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body {
+                  background-color: white; /* Ensure the iframe has a white background */
+                }
+
+                
+              </style>
+                        </head>
+                        <body>
+                            <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Agenda 3A | Fasta San Vicente</title>
+    <meta name="theme-color" content="#2563eb">
+    <title>Agenda 3RO A | Colegio Fasta San Vicente de Paúl</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background-color: #e2e8f0; border: 1px solid #e2e8f0; }
-        .calendar-day { min-height: 110px; background-color: white; padding: 0.5rem; transition: background 0.2s; }
-        .calendar-day:hover { background-color: #f1f5f9; }
-        .btn-active { background-color: #2563eb !important; color: white !important; }
-        @media (max-width: 640px) { .calendar-day { min-height: 80px; } }
+        * { -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; min-height: 100vh; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Subject Colors */
+        .bg-math { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .bg-lengua { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .bg-ingles { background-color: #e9d5ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+        .bg-bio { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .bg-fisico { background-color: #fed7aa; color: #c2410c; border: 1px solid #fdba74; }
+        .bg-historia { background-color: #ffedd5; color: #9a3412; border: 1px solid #fdba74; }
+        .bg-construccion { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+        .bg-tecno { background-color: #cffafe; color: #0e7490; border: 1px solid #a5f3fc; }
+        .bg-teatro { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .bg-comedor { background-color: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+        
+        .event-prueba { background-color: #fee2e2; border-left: 3px solid #ef4444; }
+        .event-tp { background-color: #dbeafe; border-left: 3px solid #3b82f6; }
+        .event-obligacion { background-color: #fef3c7; border-left: 3px solid #f59e0b; }
+        
+        .modal { transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .modal-content { transition: transform 0.3s ease; }
+        .modal-active .modal-content { transform: scale(1); }
+        .modal:not(.modal-active) .modal-content { transform: scale(0.95); }
+        
+        .toast { transform: translateY(100px); opacity: 0; transition: all 0.4s ease; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        
+        .spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .btn-press:active { transform: scale(0.96); }
+        .chip { transition: all 0.2s ease; }
+        .chip.selected { background-color: #2563eb; color: white; border-color: #2563eb; }
+        
+        .calendar-cell { min-height: 100px; }
+        @media (max-width: 640px) { .calendar-cell { min-height: 75px; } }
     </style>
 </head>
 <body class="text-slate-800">
 
-    <div id="app" class="flex flex-col h-screen">
-        <header class="bg-white border-b border-slate-200 p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <div class="bg-blue-600 text-white p-2 rounded-lg font-bold">3A</div>
-                <div>
-                    <h1 class="text-lg font-bold leading-tight">Agenda Escolar</h1>
-                    <p id="view-indicator" class="text-xs text-slate-500 font-medium uppercase tracking-wider">Marzo 2026</p>
-                </div>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
+        <div class="text-center p-8">
+            <div class="w-20 h-20 mx-auto mb-6 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg spinner">
+                <i class="fa-solid fa-calendar-check text-4xl text-white"></i>
             </div>
-
-            <div class="flex items-center justify-center gap-2">
-                <button onclick="navigate(-1)" class="p-2 hover:bg-slate-100 rounded-lg"><i class="fa-solid fa-chevron-left"></i></button>
-                <button onclick="goToToday()" class="px-3 py-1 text-xs font-bold border rounded-lg hover:bg-slate-50">Hoy</button>
-                <button onclick="navigate(1)" class="p-2 hover:bg-slate-100 rounded-lg"><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
-
-            <div class="flex bg-slate-100 p-1 rounded-xl">
-                <button onclick="switchView('month')" id="btn-month" class="px-4 py-1.5 text-xs font-bold rounded-lg btn-active">Mes</button>
-                <button onclick="switchView('week')" id="btn-week" class="px-4 py-1.5 text-xs font-bold rounded-lg">Semana</button>
-                <button onclick="switchView('list')" id="btn-list" class="px-4 py-1.5 text-xs font-bold rounded-lg text-slate-500">Lista</button>
-            </div>
-
-            <button onclick="openModal()" class="bg-blue-600 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 active:scale-95 transition-transform">
-                <i class="fa-solid fa-plus mr-2"></i>Nueva Actividad
-            </button>
-        </header>
-
-        <main id="calendar-container" class="flex-1 overflow-y-auto p-4 lg:p-6 bg-slate-50">
-            </main>
+            <h1 class="text-2xl font-bold text-slate-800 mb-2">Agenda 3RO A</h1>
+            <p class="text-slate-500">Cargando...</p>
+        </div>
     </div>
 
-    <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50">
-                <h3 class="font-bold">Nueva Actividad</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-times"></i></button>
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] space-y-2 w-full max-w-sm px-4"></div>
+
+    <!-- Main App -->
+    <div id="app" class="flex flex-col h-screen hidden">
+        
+        <!-- Desktop Sidebar -->
+        <aside class="hidden lg:flex flex-col w-72 bg-white border-r border-slate-200">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">3A</span>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-slate-800">Agenda Escolar</h1>
+                        <p class="text-xs text-slate-500">2026 | 3RO A</p>
+                    </div>
+                </div>
             </div>
-            <form onsubmit="saveEvent(event)" class="p-6 space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Fecha</label>
-                        <input type="date" id="input-date" required onchange="updateTimeOptions()" class="w-full p-2 border rounded-lg outline-blue-500">
+            
+            <div class="p-4 bg-blue-50 border-b border-slate-100">
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="text-center p-2 bg-white rounded-lg">
+                        <div class="text-lg font-bold text-red-500" id="stat-pruebas">0</div>
+                        <div class="text-[10px] text-slate-500 uppercase">Pruebas</div>
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Tipo</label>
-                        <select id="input-type" class="w-full p-2 border rounded-lg outline-blue-500">
-                            <option value="prueba">Prueba</option>
-                            <option value="tp">Trabajo Práctico</option>
-                            <option value="obligacion">Obligación</option>
-                        </select>
+                    <div class="text-center p-2 bg-white rounded-lg">
+                        <div class="text-lg font-bold text-blue-500" id="stat-tps">0</div>
+                        <div class="text-[10px] text-slate-500 uppercase">TPs</div>
                     </div>
+                    <div class="text-center p-2 bg-white rounded-lg">
+                        <div class="text-lg font-bold text-amber-500" id="stat-obligaciones">0</div>
+                        <div class="text-[10px] text-slate-500 uppercase">Oblig.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4">
+                <h3 class="text-xs font-semibold text-slate-400 uppercase mb-3">Materias</h3>
+                <div id="subject-filters-desktop" class="space-y-1.5"></div>
+            </div>
+            
+            <div class="p-4 border-t border-slate-100 bg-slate-50">
+                <div class="flex gap-2">
+                    <button onclick="syncData()" class="flex-1 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium btn-press">
+                        <i class="fa-solid fa-rotate mr-1"></i>Sincronizar
+                    </button>
+                    <button onclick="exportData()" class="flex-1 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium btn-press">
+                        <i class="fa-solid fa-download mr-1"></i>Exportar
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            
+            <!-- Mobile Header -->
+            <header class="lg:hidden bg-white border-b border-slate-200 z-30">
+                <div class="px-4 py-3">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
+                                <span class="text-white font-bold text-sm">3A</span>
+                            </div>
+                            <div>
+                                <h1 class="font-bold text-slate-800 text-sm">Agenda</h1>
+                                <p class="text-[10px] text-slate-500">2026</p>
+                            </div>
+                        </div>
+                        <button onclick="openCreateModal()" class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white btn-press">
+                            <i class="fa-solid fa-plus text-sm"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between bg-slate-100 rounded-xl p-1">
+                        <button onclick="changeDate(-1)" class="w-10 h-10 flex items-center justify-center text-slate-500 rounded-lg btn-press">
+                            <i class="fa-solid fa-chevron-left text-sm"></i>
+                        </button>
+                        <div class="flex bg-white rounded-lg p-0.5">
+                            <button onclick="switchView('month')" id="btn-month" class="px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-blue-50 text-blue-600">Mes</button>
+                            <button onclick="switchView('week')" id="btn-week" class="px-3 py-1.5 text-[11px] font-semibold rounded-lg text-slate-500">Sem</button>
+                            <button onclick="switchView('day')" id="btn-day" class="px-3 py-1.5 text-[11px] font-semibold rounded-lg text-slate-500">Día</button>
+                            <button onclick="switchView('list')" id="btn-list" class="px-3 py-1.5 text-[11px] font-semibold rounded-lg text-slate-500">Lista</button>
+                        </div>
+                        <button onclick="changeDate(1)" class="w-10 h-10 flex items-center justify-center text-slate-500 rounded-lg btn-press">
+                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-2">
+                        <h2 id="current-date-display-mobile" class="text-base font-bold text-slate-800"></h2>
+                        <button onclick="goToToday()" class="text-[10px] text-blue-600">Ir a hoy</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Desktop Header -->
+            <header class="hidden lg:flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
+                <div class="flex items-center gap-4">
+                    <button onclick="changeDate(-1)" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-100 rounded-xl btn-press">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <div>
+                        <h2 id="current-date-display-desktop" class="text-2xl font-bold text-slate-800"></h2>
+                        <button onclick="goToToday()" class="text-sm text-blue-600">Ir a hoy</button>
+                    </div>
+                    <button onclick="changeDate(1)" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-100 rounded-xl btn-press">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
                 </div>
                 
-                <div id="time-selector-container">
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Materia y Horario</label>
-                    <div id="time-slots" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-1">
+                <div class="flex items-center gap-3">
+                    <div class="flex bg-slate-100 rounded-xl p-1">
+                        <button onclick="switchView('month')" id="btn-month-desktop" class="px-4 py-2 text-sm font-semibold rounded-lg bg-white shadow text-blue-600">Mes</button>
+                        <button onclick="switchView('week')" id="btn-week-desktop" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-500">Semana</button>
+                        <button onclick="switchView('day')" id="btn-day-desktop" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-500">Día</button>
+                        <button onclick="switchView('list')" id="btn-list-desktop" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-500">Lista</button>
+                    </div>
+                    <button onclick="openCreateModal()" class="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-semibold btn-press">
+                        <i class="fa-solid fa-plus mr-2"></i>Nueva Actividad
+                    </button>
+                </div>
+            </header>
+
+            <!-- Mobile Filter Bar -->
+            <div class="lg:hidden border-b border-slate-200 bg-white">
+                <div class="px-4 py-3 overflow-x-auto hide-scrollbar">
+                    <div class="flex items-center gap-2">
+                        <button onclick="resetFilters()" class="flex-shrink-0 px-4 py-2 bg-slate-100 text-slate-600 rounded-full text-xs font-semibold border chip">Todas</button>
+                        <div id="subject-filters-mobile" class="flex gap-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Content -->
+            <div class="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-6">
+                <div id="calendar-content" class="bg-white rounded-xl shadow-sm border overflow-hidden"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div id="event-modal" class="modal opacity-0 pointer-events-none fixed inset-0 z-50 flex items-end lg:items-center justify-center">
+        <div class="modal-overlay absolute inset-0 bg-slate-900/50" onclick="closeModal()"></div>
+        <div class="modal-content bg-white w-full lg:max-w-2xl lg:rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col h-[95vh] lg:h-auto">
+            
+            <div class="flex items-center justify-between px-5 py-4 border-b bg-slate-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                        <i class="fa-regular fa-calendar-plus text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800" id="modal-title">Nueva Actividad</h3>
+                        <p class="text-xs text-slate-500" id="modal-subtitle"></p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="w-10 h-10 rounded-xl bg-slate-100 btn-press">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-5">
+                <form id="event-form" onsubmit="handleFormSubmit(event)">
+                    <input type="hidden" id="event-id">
+                    
+                    <!-- Type -->
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-3">Tipo</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="type" value="prueba" class="peer sr-only" checked onchange="toggleModality(true)">
+                                <div class="p-4 text-center border-2 border-slate-200 rounded-xl peer-checked:border-red-500 peer-checked:bg-red-50">
+                                    <i class="fa-solid fa-pen-to-square text-2xl text-slate-400 peer-checked:text-red-500 mb-2"></i>
+                                    <div class="text-xs font-semibold">Prueba</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="type" value="tp" class="peer sr-only" onchange="toggleModality(false)">
+                                <div class="p-4 text-center border-2 border-slate-200 rounded-xl peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                                    <i class="fa-solid fa-folder-open text-2xl text-slate-400 peer-checked:text-blue-500 mb-2"></i>
+                                    <div class="text-xs font-semibold">TP</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="type" value="obligacion" class="peer sr-only" onchange="toggleModality(false)">
+                                <div class="p-4 text-center border-2 border-slate-200 rounded-xl peer-checked:border-amber-500 peer-checked:bg-amber-50">
+                                    <i class="fa-solid fa-bell text-2xl text-slate-400 peer-checked:text-amber-500 mb-2"></i>
+                                    <div class="text-xs font-semibold">Obligación</div>
+                                </div>
+                            </label>
                         </div>
-                    <input type="hidden" id="input-subject">
-                    <input type="hidden" id="input-time">
-                </div>
+                    </div>
 
+                    <!-- Date -->
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Fecha</label>
+                        <input type="date" id="event-date-input" required onchange="onDateChange()" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none">
+                        <div id="day-schedule-preview" class="mt-3 hidden">
+                            <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Horarios del Día</label>
+                            <div id="schedule-slots" class="grid grid-cols-2 gap-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Subject & Time -->
+                    <div class="grid grid-cols-2 gap-4 mb-5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Materia</label>
+                            <select id="event-subject" required onchange="updateTimeSlots()" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none bg-white">
+                                <option value="">Seleccionar...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Horario</label>
+                            <select id="event-time" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none bg-white">
+                                <option value="">Seleccionar...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Título</label>
+                        <input type="text" id="event-title" required class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none" placeholder="Ej: Examen">
+                    </div>
+
+                    <!-- Modality -->
+                    <div id="modality-group" class="mb-5 p-4 bg-red-50 rounded-xl border border-red-100">
+                        <label class="block text-xs font-semibold text-red-700 uppercase mb-3">Modalidad</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2"><input type="radio" name="modality" value="escrita" checked class="w-4 h-4">Escrita</label>
+                            <label class="flex items-center gap-2"><input type="radio" name="modality" value="oral" class="w-4 h-4">Oral</label>
+                            <label class="flex items-center gap-2"><input type="radio" name="modality" value="practica" class="w-4 h-4">Práctica</label>
+                        </div>
+                    </div>
+
+                    <!-- Topics -->
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Temas</label>
+                        <textarea id="event-topics" rows="3" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none resize-none" placeholder="Unidad 1, 2..."></textarea>
+                    </div>
+
+                    <!-- Drive Link -->
+                    <div class="mb-6">
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Google Drive</label>
+                        <input type="url" id="event-file-url" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none" placeholder="https://drive.google.com/...">
+                        <div id="file-preview" class="hidden mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+                            <span id="file-preview-text" class="text-sm text-green-700"></span>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <button type="submit" id="submit-btn" class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold btn-press mb-3">
+                        <i class="fa-solid fa-cloud-arrow-up mr-2"></i>Guardar
+                    </button>
+                    <button type="button" onclick="addToGoogleCalendar()" class="w-full py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl font-semibold btn-press">
+                        <i class="fa-brands fa-google mr-2"></i>Google Calendar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day View Modal -->
+    <div id="day-view-modal" class="modal opacity-0 pointer-events-none fixed inset-0 z-50 flex items-end lg:items-center justify-center">
+        <div class="modal-overlay absolute inset-0 bg-slate-900/50" onclick="closeDayView()"></div>
+        <div class="modal-content bg-white w-full lg:max-w-3xl lg:rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col h-[95vh] lg:h-auto">
+            <div class="flex items-center justify-between px-5 py-4 border-b bg-slate-50">
                 <div>
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Título</label>
-                    <input type="text" id="input-title" required placeholder="Ej: Evaluación de Historia" class="w-full p-2 border rounded-lg outline-blue-500">
+                    <h3 class="text-lg font-bold text-slate-800" id="day-view-title"></h3>
+                    <p class="text-xs text-slate-500" id="day-view-date"></p>
                 </div>
+                <button onclick="closeDayView()" class="w-10 h-10 rounded-xl bg-slate-100 btn-press"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-5" id="day-view-content"></div>
+        </div>
+    </div>
 
-                <button type="submit" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg active:scale-95 transition-transform">Guardar</button>
-            </form>
+    <!-- List Filters Modal -->
+    <div id="list-filters-modal" class="modal opacity-0 pointer-events-none fixed inset-0 z-50 flex items-end lg:items-center justify-center">
+        <div class="modal-overlay absolute inset-0 bg-slate-900/50" onclick="closeListFilters()"></div>
+        <div class="modal-content bg-white w-full lg:max-w-lg lg:rounded-2xl shadow-2xl z-50">
+            <div class="flex items-center justify-between px-5 py-4 border-b bg-slate-50">
+                <h3 class="text-lg font-bold"><i class="fa-solid fa-filter text-blue-600 mr-2"></i>Filtros</h3>
+                <button onclick="closeListFilters()" class="w-10 h-10 rounded-xl bg-slate-100 btn-press"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Mes</label>
+                    <select id="filter-month" onchange="applyListFilters()" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl outline-none bg-white"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Materia</label>
+                    <select id="filter-subject" onchange="applyListFilters()" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl outline-none bg-white"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Tipo</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="toggleTypeFilter('prueba')" id="filter-prueba" class="py-3 border-2 border-slate-200 rounded-xl text-xs font-semibold chip selected"><i class="fa-solid fa-pen-to-square text-red-500"></i><br>Pruebas</button>
+                        <button onclick="toggleTypeFilter('tp')" id="filter-tp" class="py-3 border-2 border-slate-200 rounded-xl text-xs font-semibold chip selected"><i class="fa-solid fa-folder-open text-blue-500"></i><br>TPs</button>
+                        <button onclick="toggleTypeFilter('obligacion')" id="filter-obligacion" class="py-3 border-2 border-slate-200 rounded-xl text-xs font-semibold chip selected"><i class="fa-solid fa-bell text-amber-500"></i><br>Oblig.</button>
+                    </div>
+                </div>
+                <button onclick="resetListFilters()" class="w-full py-3 border-2 border-slate-200 rounded-xl font-semibold btn-press">Restablecer</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURACIÓN Y DATOS ---
-        let viewDate = new Date(); // Fecha que el usuario está viendo
-        let currentView = 'month';
-        let events = JSON.parse(localStorage.getItem('agenda3A_v2')) || [];
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4shbJRTlAkUYjr3gMd2HBFP4Ox8PlRNexE-E3HeHmhXhpQkYGsFS2gbNaxl0ZWGU/exec';
+        
+        // ============================================
+        // DATA
+        // ============================================
+        const subjectsConfig = {
+            'MATEMATICA': { color: 'bg-math', icon: 'fa-calculator', label: 'Matemática' },
+            'MATEMÁTICA': { color: 'bg-math', icon: 'fa-calculator', label: 'Matemática' },
+            'PDL': { color: 'bg-lengua', icon: 'fa-book-open', label: 'PDL' },
+            'INGLÉS': { color: 'bg-ingles', icon: 'fa-globe', label: 'Inglés' },
+            'BIOLOGÍA': { color: 'bg-bio', icon: 'fa-microscope', label: 'Biología' },
+            'FISÍCO QUÍMICA': { color: 'bg-fisico', icon: 'fa-flask', label: 'Físico Química' },
+            'HISTORIA': { color: 'bg-historia', icon: 'fa-landmark', label: 'Historia' },
+            'GEOGRAFÍA': { color: 'bg-historia', icon: 'fa-compass', label: 'Geografía' },
+            'FOR DOC': { color: 'bg-construccion', icon: 'fa-scale-balanced', label: 'For Doc' },
+            'CONSTRUCCIÓN': { color: 'bg-construccion', icon: 'fa-trowel-bricks', label: 'Construcción' },
+            'TECNOLOGIA': { color: 'bg-tecno', icon: 'fa-microchip', label: 'Tecnología' },
+            'TEATRO': { color: 'bg-teatro', icon: 'fa-masks-theater', label: 'Teatro' },
+            'ED FÍSICA': { color: 'bg-teatro', icon: 'fa-person-running', label: 'Ed. Física' },
+            'TUTORIA': { color: 'bg-construccion', icon: 'fa-user-group', label: 'Tutoría' }
+        };
 
+        const allSubjectsIncludingComedor = {
+            ...subjectsConfig,
+            'COMEDOR': { color: 'bg-comedor', icon: 'fa-utensils', label: 'Comedor' }
+        };
+
+        // Timetable: Index 0=Lunes, 1=Martes, 2=Miércoles, 3=Jueves, 4=Viernes
         const timetable = [
-            ['GEOGRAFÍA', 'BIOLOGÍA', 'CONSTRUCCIÓN', 'HISTORIA', '', 'ED FÍSICA'], // Lunes
-            ['MATEMATICA', 'GEOGRAFÍA', 'FOR DOC', 'PDL', 'BIOLOGÍA', 'FISÍCO QUÍMICA'], // Martes
-            ['FOR DOC', 'MATEMÁTICA', 'PDL', 'INGLÉS', 'TUTORIA', 'COMEDOR', '', 'TECNOLOGIA', 'TECNOLOGIA'], // Miércoles
-            ['MATEMÁTICA', 'MATEMATICA', 'TEATRO', 'PDL', 'FISÍCO QUÍMICA', 'TUTORIA', 'TUTORIA'], // Jueves
-            ['TEATRO', 'PDL', 'CONSTRUCCIÓN', 'HISTORIA', 'INGLÉS', 'ED FÍSICA'] // Viernes
+            ['GEOGRAFÍA', 'BIOLOGÍA', 'CONSTRUCCIÓN', 'HISTORIA', '', 'ED FÍSICA', '', '', '', '', ''],
+            ['MATEMATICA', 'GEOGRAFÍA', 'FOR DOC', 'PDL', 'BIOLOGÍA', 'FISÍCO QUÍMICA', '', '', '', '', ''],
+            ['FOR DOC', 'MATEMÁTICA', 'PDL', 'INGLÉS', 'TUTORIA', 'COMEDOR', '', 'TECNOLOGIA', 'TECNOLOGIA', '', ''],
+            ['MATEMÁTICA', 'MATEMATICA', 'TEATRO', 'PDL', 'FISÍCO QUÍMICA', 'TUTORIA', 'TUTORIA', '', '', '', ''],
+            ['TEATRO', 'PDL', 'CONSTRUCCIÓN', 'HISTORIA', 'INGLÉS', 'ED FÍSICA', '', '', '', '', '']
         ];
 
         const timeLabels = ['07:40', '08:40', '09:55', '11:05', '12:05', '13:15', '14:30', '14:00', '14:40', '15:30', '16:10'];
+        const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const dayNamesShort = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
-        // --- FUNCIONES DE RENDERIZADO ---
-        function render() {
-            const container = document.getElementById('calendar-container');
-            const indicator = document.getElementById('view-indicator');
-            container.innerHTML = '';
+        let currentDate = new Date();
+        let currentView = 'month';
+        let events = [];
+        let activeFilter = null;
+        let selectedDayForModal = null;
+        let listFilters = { month: 'all', subject: 'all', types: ['prueba', 'tp', 'obligacion'], sort: 'asc' };
 
-            if (currentView === 'month') {
-                indicator.innerText = viewDate.toLocaleString('es-AR', { month: 'long', year: 'numeric' });
-                renderMonth(container);
-            } else if (currentView === 'week') {
-                indicator.innerText = "Semana del " + getStartOfWeek(viewDate).toLocaleDateString();
-                renderWeek(container);
-            } else if (currentView === 'list') {
-                indicator.innerText = "Próximas Actividades";
-                renderList(container);
-            }
+        // ============================================
+        // DATE UTILITIES - FIXED TIMEZONE ISSUES
+        // ============================================
+        
+        // Get local date string without timezone issues
+        function getLocalDateString(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
-        function renderMonth(container) {
-            const year = viewDate.getFullYear();
-            const month = viewDate.getMonth();
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
+        // Parse date string to local date (no timezone shift)
+        function parseLocalDate(dateString) {
+            const [year, month, day] = dateString.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
+        // Get day of week (0=Sunday, 1=Monday, ..., 6=Saturday)
+        function getDayOfWeek(dateString) {
+            const date = parseLocalDate(dateString);
+            return date.getDay();
+        }
+
+        // Check if weekend (Saturday=6 or Sunday=0)
+        function isWeekend(dateString) {
+            const day = getDayOfWeek(dateString);
+            return day === 0 || day === 6;
+        }
+
+        // Get timetable index from date string (0=Monday, 4=Friday)
+        function getTimetableIndex(dateString) {
+            const day = getDayOfWeek(dateString);
+            // Monday=1 -> 0, Tuesday=2 -> 1, ..., Friday=5 -> 4
+            return day - 1;
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+
+        async function initializeApp() {
+            renderSubjectFilters();
+            populateSubjectDropdown();
+            populateFilterDropdowns();
+            await loadDataFromGoogleSheets();
+            updateStats();
             
-            // Ajuste para que empiece en Lunes (0=Dom, 1=Lun...)
-            const startOffset = firstDay === 0 ? 6 : firstDay - 1;
-
-            let html = `<div class="calendar-grid">`;
-            ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach(d => {
-                html += `<div class="bg-slate-100 p-2 text-center text-[10px] font-bold text-slate-500 uppercase">${d}</div>`;
-            });
-
-            for (let i = 0; i < startOffset; i++) html += `<div class="calendar-day bg-slate-50/50"></div>`;
-
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                const isToday = new Date().toISOString().split('T')[0] === dateStr;
-                const dayEvents = events.filter(e => e.date === dateStr);
-
-                html += `
-                    <div class="calendar-day cursor-pointer" onclick="openModal('${dateStr}')">
-                        <span class="text-xs font-bold ${isToday ? 'bg-blue-600 text-white w-6 h-6 flex items-center justify-center rounded-full' : ''}">${d}</span>
-                        <div class="mt-1 space-y-1">
-                            ${dayEvents.map(e => `<div class="text-[9px] p-1 rounded font-bold truncate ${getEventColor(e.type)}">${e.title}</div>`).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-            html += `</div>`;
-            container.innerHTML = html;
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('opacity-0');
+                setTimeout(() => {
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('app').classList.remove('hidden');
+                }, 500);
+            }, 1000);
         }
 
-        function renderWeek(container) {
-            const start = getStartOfWeek(viewDate);
-            let html = `<div class="grid grid-cols-1 md:grid-cols-5 gap-4">`;
-            
-            for (let i = 0; i < 5; i++) {
-                const day = new Date(start);
-                day.setDate(start.getDate() + i);
-                const dateStr = day.toISOString().split('T')[0];
-                const dayEvents = events.filter(e => e.date === dateStr);
-                
-                html += `
-                    <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200">
-                        <h4 class="font-bold text-blue-600 text-sm mb-3">${day.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric' })}</h4>
-                        <div class="space-y-2">
-                            ${dayEvents.length ? dayEvents.map(e => `
-                                <div class="p-2 rounded-lg border-l-4 ${getEventColor(e.type)} border-opacity-50">
-                                    <div class="text-[10px] font-bold uppercase opacity-70">${e.subject}</div>
-                                    <div class="text-xs font-bold">${e.title}</div>
-                                </div>
-                            `).join('') : '<p class="text-[10px] text-slate-400 italic">No hay actividades</p>'}
-                        </div>
-                    </div>
-                `;
-            }
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        function renderList(container) {
-            const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
-            if (sortedEvents.length === 0) {
-                container.innerHTML = `<div class="text-center py-20 text-slate-400"><i class="fa-solid fa-calendar-xmark text-4xl mb-3"></i><p>No tenés actividades guardadas.</p></div>`;
-                return;
-            }
-
-            container.innerHTML = `
-                <div class="max-w-2xl mx-auto space-y-3">
-                    ${sortedEvents.map(e => `
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between shadow-sm">
-                            <div class="flex items-center gap-4">
-                                <div class="text-center bg-slate-100 p-2 rounded-lg min-w-[60px]">
-                                    <div class="text-xs font-bold text-blue-600">${new Date(e.date + 'T00:00:00').toLocaleDateString('es-AR', { day: 'numeric' })}</div>
-                                    <div class="text-[9px] uppercase font-bold text-slate-500">${new Date(e.date + 'T00:00:00').toLocaleDateString('es-AR', { month: 'short' })}</div>
-                                </div>
-                                <div>
-                                    <div class="text-[10px] font-bold text-slate-400 uppercase">${e.subject || 'Sin Materia'}</div>
-                                    <div class="font-bold text-slate-800">${e.title}</div>
-                                </div>
-                            </div>
-                            <button onclick="deleteEvent('${e.id}')" class="text-slate-300 hover:text-red-500 transition-colors"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        // --- LÓGICA DE NEGOCIOS ---
-        function updateTimeOptions() {
-            const dateInput = document.getElementById('input-date').value;
-            const slotsDiv = document.getElementById('time-slots');
-            slotsDiv.innerHTML = '';
-            
-            if (!dateInput) return;
-
-            // FIX DEL LUNES/FIN DE SEMANA:
-            // Usamos split y new Date(y, m, d) para evitar el error de zona horaria UTC.
-            const [y, m, d] = dateInput.split('-').map(Number);
-            const selectedDate = new Date(y, m - 1, d); 
-            const dayOfWeek = selectedDate.getDay(); // 0=Dom, 1=Lun, 6=Sab
-
-            if (dayOfWeek === 0 || dayOfWeek === 6) {
-                slotsDiv.innerHTML = `<p class="col-span-2 text-red-500 text-[10px] font-bold text-center py-4 bg-red-50 rounded-lg">Fines de semana no hay clases</p>`;
-                return;
-            }
-
-            const daySchedule = timetable[dayOfWeek - 1]; // Lunes es 1, usamos índice 0
-            daySchedule.forEach((sub, i) => {
-                if (sub && sub !== 'COMEDOR') {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = "text-left p-2 border rounded-lg hover:border-blue-500 transition-all slot-btn";
-                    btn.innerHTML = `<div class="text-[8px] text-slate-400 font-bold">${timeLabels[i]}</div><div class="text-[10px] font-bold truncate">${sub}</div>`;
-                    btn.onclick = () => {
-                        document.getElementById('input-subject').value = sub;
-                        document.getElementById('input-time').value = timeLabels[i];
-                        document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('bg-blue-50', 'border-blue-500'));
-                        btn.classList.add('bg-blue-50', 'border-blue-500');
-                    };
-                    slotsDiv.appendChild(btn);
+        // ============================================
+        // GOOGLE SHEETS API
+        // ============================================
+        async function loadDataFromGoogleSheets() {
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'no-cors' });
+                const localData = localStorage.getItem('agenda3roa_events');
+                if (localData) {
+                    events = JSON.parse(localData);
+                    showToast('Datos cargados', 'success');
                 }
-            });
-        }
-
-        function saveEvent(e) {
-            e.preventDefault();
-            const newEvent = {
-                id: Date.now().toString(),
-                date: document.getElementById('input-date').value,
-                type: document.getElementById('input-type').value,
-                subject: document.getElementById('input-subject').value,
-                time: document.getElementById('input-time').value,
-                title: document.getElementById('input-title').value
-            };
-            
-            events.push(newEvent);
-            localStorage.setItem('agenda3A_v2', JSON.stringify(events));
-            closeModal();
-            render();
-        }
-
-        function deleteEvent(id) {
-            if (confirm('¿Borrar esta actividad?')) {
-                events = events.filter(e => e.id !== id);
-                localStorage.setItem('agenda3A_v2', JSON.stringify(events));
-                render();
+            } catch (error) {
+                console.error('Error:', error);
+                const localData = localStorage.getItem('agenda3roa_events');
+                if (localData) events = JSON.parse(localData);
+            } finally {
+                renderCalendar();
             }
         }
 
-        // --- NAVEGACIÓN Y UTILIDADES ---
-        function switchView(v) {
-            currentView = v;
-            document.querySelectorAll('[id^="btn-"]').forEach(b => b.classList.remove('btn-active', 'text-white'));
-            document.getElementById(`btn-${v}`).classList.add('btn-active');
-            render();
+        async function saveToGoogleSheets(eventData, action = 'create') {
+            const submitBtn = document.getElementById('submit-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch spinner"></i> Guardando...';
+            
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: action, ...eventData })
+                });
+                
+                if (action === 'create') {
+                    events.push(eventData);
+                } else if (action === 'update') {
+                    const index = events.findIndex(e => e.id === eventData.id);
+                    if (index !== -1) events[index] = eventData;
+                } else if (action === 'delete') {
+                    events = events.filter(e => e.id !== eventData.id);
+                }
+                
+                localStorage.setItem('agenda3roa_events', JSON.stringify(events));
+                showToast(action === 'delete' ? 'Eliminado' : 'Guardado!', 'success');
+                closeModal();
+                renderCalendar();
+                updateStats();
+            } catch (error) {
+                showToast('Error al guardar', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
         }
 
-        function navigate(dir) {
-            if (currentView === 'month') viewDate.setMonth(viewDate.getMonth() + dir);
-            else if (currentView === 'week') viewDate.setDate(viewDate.getDate() + (dir * 7));
-            render();
+        async function syncData() {
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'no-cors' });
+                showToast('Sincronizado', 'success');
+            } catch (error) {
+                showToast('Error de sync', 'error');
+            } finally {
+                renderCalendar();
+                updateStats();
+            }
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(events, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `agenda-3roa-${getLocalDateString(new Date())}.json`;
+            a.click();
+            showToast('Exportado', 'success');
+        }
+
+        function updateStats() {
+            const now = new Date();
+            const thisMonth = events.filter(e => {
+                const eDate = parseLocalDate(e.fecha || e.date);
+                return eDate.getMonth() === now.getMonth() && eDate.getFullYear() === now.getFullYear();
+            });
+            document.getElementById('stat-pruebas').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'prueba').length;
+            document.getElementById('stat-tps').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'tp').length;
+            document.getElementById('stat-obligaciones').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'obligacion').length;
+        }
+
+        // ============================================
+        // VIEW FUNCTIONS
+        // ============================================
+        function switchView(view) {
+            currentView = view;
+            ['month', 'week', 'day', 'list'].forEach(v => {
+                ['btn-' + v, 'btn-' + v + '-desktop'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if(btn) {
+                        if(v === view) {
+                            btn.classList.add('bg-blue-50', 'text-blue-600');
+                            btn.classList.remove('text-slate-500');
+                        } else {
+                            btn.classList.remove('bg-blue-50', 'text-blue-600');
+                            btn.classList.add('text-slate-500');
+                        }
+                    }
+                });
+            });
+            renderCalendar();
+        }
+
+        function changeDate(direction) {
+            if (currentView === 'month' || currentView === 'list') {
+                currentDate.setMonth(currentDate.getMonth() + direction);
+            } else if (currentView === 'week') {
+                currentDate.setDate(currentDate.getDate() + (direction * 7));
+            } else if (currentView === 'day') {
+                currentDate.setDate(currentDate.getDate() + direction);
+            }
+            renderCalendar();
         }
 
         function goToToday() {
-            viewDate = new Date();
-            render();
+            currentDate = new Date();
+            renderCalendar();
         }
 
-        function getStartOfWeek(d) {
-            const date = new Date(d);
-            const day = date.getDay();
-            const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-            return new Date(date.setDate(diff));
-        }
+        // ============================================
+        // FILTER FUNCTIONS
+        // ============================================
+        function renderSubjectFilters() {
+            const mobileContainer = document.getElementById('subject-filters-mobile');
+            const desktopContainer = document.getElementById('subject-filters-desktop');
+            const uniqueSubjects = Object.keys(subjectsConfig).sort();
+            
+            const html = uniqueSubjects.map(sub => {
+                const config = subjectsConfig[sub];
+                const colorClass = config.color.split(' ')[0];
+                const isActive = activeFilter === sub;
+                return `<button onclick="toggleSubjectFilter('${sub}')" class="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full text-xs font-semibold border chip ${isActive ? 'ring-2 ring-blue-500 bg-slate-100' : 'bg-white'}">
+                    <div class="w-2.5 h-2.5 rounded-full ${colorClass.replace('bg-', 'bg-')}"></div>
+                    <span>${config.label}</span>
+                </button>`;
+            }).join('');
 
-        function getEventColor(type) {
-            if (type === 'prueba') return 'bg-red-100 text-red-700 border-red-200';
-            if (type === 'tp') return 'bg-blue-100 text-blue-700 border-blue-200';
-            return 'bg-amber-100 text-amber-700 border-amber-200';
-        }
-
-        function openModal(date = '') {
-            document.getElementById('modal').classList.remove('hidden');
-            if (date) {
-                document.getElementById('input-date').value = date;
-                updateTimeOptions();
+            if(mobileContainer) mobileContainer.innerHTML = html;
+            if(desktopContainer) {
+                desktopContainer.innerHTML = uniqueSubjects.map(sub => {
+                    const config = subjectsConfig[sub];
+                    const colorClass = config.color.split(' ')[0];
+                    const isActive = activeFilter === sub;
+                    return `<button onclick="toggleSubjectFilter('${sub}')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl ${isActive ? 'bg-blue-50 border-2 border-blue-200' : 'hover:bg-slate-50 border-2 border-transparent'}">
+                        <div class="w-3 h-3 rounded-full ${colorClass.replace('bg-', 'bg-')}"></div>
+                        <span class="text-sm font-medium">${config.label}</span>
+                        ${isActive ? '<i class="fa-solid fa-check text-blue-600 ml-auto"></i>' : ''}
+                    </button>`;
+                }).join('');
             }
         }
 
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-            document.getElementById('input-title').value = '';
+        function toggleSubjectFilter(subject) {
+            activeFilter = activeFilter === subject ? null : subject;
+            renderSubjectFilters();
+            renderCalendar();
         }
 
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', render);
+        function resetFilters() {
+            activeFilter = null;
+            renderSubjectFilters();
+            renderCalendar();
+        }
+
+        function populateSubjectDropdown() {
+            const select = document.getElementById('event-subject');
+            const uniqueSubjects = Object.keys(subjectsConfig).sort();
+            select.innerHTML = '<option value="">Seleccionar...</option>' + 
+                uniqueSubjects.map(sub => `<option value="${sub}">${subjectsConfig[sub].label}</option>`).join('');
+            
+            const filterSelect = document.getElementById('filter-subject');
+            filterSelect.innerHTML = '<option value="all">Todas</option>' + 
+                uniqueSubjects.map(sub => `<option value="${sub}">${subjectsConfig[sub].label}</option>`).join('');
+        }
+
+        function populateFilterDropdowns() {
+            const monthSelect = document.getElementById('filter-month');
+            const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            const now = new Date();
+            for (let i = -1; i < 12; i++) {
+                const date = new Date(now.getFullYear(), now.getMonth() + i, 1);
+                const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                monthSelect.innerHTML += `<option value="${value}">${months[date.getMonth()]} ${date.getFullYear()}</option>`;
+            }
+        }
+
+        // ============================================
+        // DATE & TIME SLOT - FIXED!
+        // ============================================
+        function onDateChange() {
+            const dateInput = document.getElementById('event-date-input').value;
+            if (!dateInput) return;
+            
+            // DEBUG: Log the date and day
+            console.log('Date selected:', dateInput);
+            console.log('Day of week:', getDayOfWeek(dateInput), '(', dayNames[getDayOfWeek(dateInput)], ')');
+            console.log('Is weekend?', isWeekend(dateInput));
+            
+            const preview = document.getElementById('day-schedule-preview');
+            const slotsContainer = document.getElementById('schedule-slots');
+            
+            // CORRECT: Weekend is Saturday (6) or Sunday (0)
+            if (isWeekend(dateInput)) {
+                preview.classList.remove('hidden');
+                slotsContainer.innerHTML = `
+                    <div class="col-span-full p-4 bg-slate-100 rounded-xl text-center">
+                        <i class="fa-solid fa-calendar-xmark text-3xl text-slate-400 mb-2"></i>
+                        <p class="text-sm font-medium text-slate-500">No hay clases los fines de semana</p>
+                    </div>
+                `;
+                document.getElementById('event-time').innerHTML = '<option value="">Sin horarios</option>';
+                return;
+            }
+            
+            // Get timetable index (0=Monday, 4=Friday)
+            const timetableIndex = getTimetableIndex(dateInput);
+            console.log('Timetable index:', timetableIndex);
+            
+            const daySchedule = timetable[timetableIndex];
+            preview.classList.remove('hidden');
+            
+            let slotsHtml = '';
+            let timeOptions = '<option value="">Seleccionar...</option>';
+            
+            daySchedule.forEach((subject, slotIndex) => {
+                if (subject && subjectsConfig[subject]) { // Only subjects that can have assignments
+                    const config = subjectsConfig[subject];
+                    const timeLabel = timeLabels[slotIndex];
+                    slotsHtml += `
+                        <button type="button" onclick="selectTimeSlot('${timetableIndex}-${slotIndex}', '${subject}')" class="time-slot p-3 border-2 border-slate-200 rounded-xl text-left hover:border-blue-300">
+                            <div class="text-[10px] text-slate-400">${timeLabel}</div>
+                            <div class="text-xs font-semibold ${config.color.split(' ')[1]}">${subject}</div>
+                        </button>
+                    `;
+                    timeOptions += `<option value="${timetableIndex}-${slotIndex}">${subject} - ${timeLabel}</option>`;
+                }
+            });
+            
+            slotsContainer.innerHTML = slotsHtml;
+            document.getElementById('event-time').innerHTML = timeOptions;
+        }
+
+        function selectTimeSlot(slotValue, subject) {
+            document.getElementById('event-time').value = slotValue;
+            const subjectSelect = document.getElementById('event-subject');
+            if (subjectsConfig[subject]) {
+                subjectSelect.value = subject;
+                updateTimeSlots();
+            }
+            document.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('selected'));
+            event.target.closest('.time-slot').classList.add('selected');
+        }
+
+        function updateTimeSlots() {
+            const subject = document.getElementById('event-subject').value;
+            const dateInput = document.getElementById('event-date-input').value;
+            const timeSelect = document.getElementById('event-time');
+            
+            if (!subject || !dateInput) {
+                timeSelect.innerHTML = '<option value="">Seleccionar fecha y materia</option>';
+                return;
+            }
+            
+            if (isWeekend(dateInput)) {
+                timeSelect.innerHTML = '<option value="">Fin de semana</option>';
+                return;
+            }
+            
+            const timetableIndex = getTimetableIndex(dateInput);
+            const daySchedule = timetable[timetableIndex];
+            
+            let options = '<option value="">Seleccionar...</option>';
+            let found = false;
+            
+            daySchedule.forEach((slotSubject, slotIndex) => {
+                if (slotSubject === subject) {
+                    options += `<option value="${timetableIndex}-${slotIndex}">${timeLabels[slotIndex]}</option>`;
+                    found = true;
+                }
+            });
+            
+            if (!found) {
+                options = '<option value="">No tiene clase este día</option>';
+            }
+            
+            timeSelect.innerHTML = options;
+        }
+
+        function toggleModality(show) {
+            document.getElementById('modality-group').style.display = show ? 'block' : 'none';
+        }
+
+        // ============================================
+        // GOOGLE CALENDAR
+        // ============================================
+        function addToGoogleCalendar() {
+            const title = document.getElementById('event-title').value;
+            const date = document.getElementById('event-date-input').value;
+            const topics = document.getElementById('event-topics').value;
+            const subject = document.getElementById('event-subject').value;
+            
+            if (!title || !date) {
+                showToast('Completa título y fecha', 'error');
+                return;
+            }
+            
+            const startDate = new Date(date);
+            startDate.setHours(8, 0, 0);
+            const endDate = new Date(date);
+            endDate.setHours(9, 0, 0);
+            
+            const formatDateTime = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+                `&text=${encodeURIComponent(title)}` +
+                `&dates=${formatDateTime(startDate)}/${formatDateTime(endDate)}` +
+                `&details=${encodeURIComponent(topics || '')}` +
+                `&location=Colegio+Fasta+San+Vicente+de+Paúl`;
+            
+            window.open(url, '_blank');
+        }
+
+        // ============================================
+        // MODAL FUNCTIONS
+        // ============================================
+        function openCreateModal(dateStr = null, eventId = null) {
+            const modal = document.getElementById('event-modal');
+            document.getElementById('event-form').reset();
+            document.getElementById('modality-group').style.display = 'block';
+            document.getElementById('file-preview').classList.add('hidden');
+            document.getElementById('day-schedule-preview').classList.add('hidden');
+            
+            if (eventId) {
+                const event = events.find(e => e.id === eventId);
+                if (event) {
+                    document.getElementById('modal-title').textContent = 'Editar Actividad';
+                    document.getElementById('event-id').value = event.id;
+                    document.getElementById('event-date-input').value = event.fecha || event.date;
+                    document.getElementById('event-subject').value = event.materia || event.subject;
+                    document.getElementById('event-time').value = event.horario || event.timeSlot;
+                    document.getElementById('event-title').value = event.titulo || event.title;
+                    document.getElementById('event-topics').value = event.temas || event.topics;
+                    document.getElementById('event-file-url').value = event.archivo || '';
+                    
+                    if (event.modalidad) {
+                        const radio = document.querySelector(`input[name="modality"][value="${event.modalidad}"]`);
+                        if (radio) radio.checked = true;
+                    }
+                    
+                    const typeRadio = document.querySelector(`input[name="type"][value="${event.tipo || event.type}"]`);
+                    if (typeRadio) {
+                        typeRadio.checked = true;
+                        toggleModality((event.tipo || event.type) === 'prueba');
+                    }
+                    
+                    onDateChange();
+                }
+            } else {
+                document.getElementById('modal-title').textContent = 'Nueva Actividad';
+                document.getElementById('event-id').value = '';
+                document.getElementById('event-date-input').value = dateStr || getLocalDateString(new Date());
+                onDateChange();
+            }
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => modal.classList.add('modal-active'), 10);
+        }
+
+        function openCreateModalFromDayView() {
+            openCreateModal(selectedDayForModal);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('event-modal');
+            modal.classList.remove('modal-active');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function openDayView(dateStr) {
+            selectedDayForModal = dateStr;
+            const modal = document.getElementById('day-view-modal');
+            const date = parseLocalDate(dateStr);
+            
+            document.getElementById('day-view-title').textContent = dayNames[getDayOfWeek(dateStr)];
+            document.getElementById('day-view-date').textContent = date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            renderDayViewContent(dateStr);
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => modal.classList.add('modal-active'), 10);
+        }
+
+        function closeDayView() {
+            const modal = document.getElementById('day-view-modal');
+            modal.classList.remove('modal-active');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function openListFilters() {
+            const modal = document.getElementById('list-filters-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => modal.classList.add('modal-active'), 10);
+        }
+
+        function closeListFilters() {
+            const modal = document.getElementById('list-filters-modal');
+            modal.classList.remove('modal-active');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // ============================================
+        // LIST FILTERS
+        // ============================================
+        function toggleTypeFilter(type) {
+            const btn = document.getElementById(`filter-${type}`);
+            const index = listFilters.types.indexOf(type);
+            
+            if (index > -1 && listFilters.types.length > 1) {
+                listFilters.types.splice(index, 1);
+                btn.classList.remove('selected');
+            } else if (index === -1) {
+                listFilters.types.push(type);
+                btn.classList.add('selected');
+            }
+            
+            applyListFilters();
+        }
+
+        function applyListFilters() {
+            listFilters.month = document.getElementById('filter-month').value;
+            listFilters.subject = document.getElementById('filter-subject').value;
+            listFilters.sort = document.getElementById('filter-sort').value;
+            renderListView();
+        }
+
+        function resetListFilters() {
+            listFilters = { month: 'all', subject: 'all', types: ['prueba', 'tp', 'obligacion'], sort: 'asc' };
+            document.getElementById('filter-month').value = 'all';
+            document.getElementById('filter-subject').value = 'all';
+            document.getElementById('filter-sort').value = 'asc';
+            ['prueba', 'tp', 'obligacion'].forEach(t => document.getElementById(`filter-${t}`).classList.add('selected'));
+            applyListFilters();
+        }
+
+        // ============================================
+        // FORM SUBMISSION
+        // ============================================
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const fileUrl = document.getElementById('event-file-url').value;
+            if (fileUrl && !fileUrl.includes('drive.google.com')) {
+                showToast('El enlace debe ser de Drive', 'error');
+                return;
+            }
+            
+            const eventData = {
+                id: document.getElementById('event-id').value || Date.now().toString(),
+                fecha: document.getElementById('event-date-input').value,
+                materia: document.getElementById('event-subject').value,
+                tipo: document.querySelector('input[name="type"]:checked').value,
+                titulo: document.getElementById('event-title').value,
+                modalidad: document.querySelector('input[name="modality"]:checked')?.value,
+                temas: document.getElementById('event-topics').value,
+                horario: document.getElementById('event-time').value,
+                archivo: fileUrl || '',
+                done: false
+            };
+
+            const eventId = document.getElementById('event-id').value;
+            saveToGoogleSheets(eventData, eventId ? 'update' : 'create');
+        }
+
+        function deleteEvent(id) {
+            if(confirm('¿Eliminar?')) {
+                saveToGoogleSheets({ id: id }, 'delete');
+            }
+        }
+
+        // ============================================
+        // CALENDAR RENDERING
+        // ============================================
+        function renderCalendar() {
+            const container = document.getElementById('calendar-content');
+            const displayMobile = document.getElementById('current-date-display-mobile');
+            const displayDesktop = document.getElementById('current-date-display-desktop');
+            
+            const formatted = currentDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' }).replace(/^\w/, c => c.toUpperCase());
+            if(displayMobile) displayMobile.textContent = formatted;
+            if(displayDesktop) displayDesktop.textContent = formatted;
+
+            if (currentView === 'month') renderMonthView(container);
+            else if (currentView === 'week') renderWeekView(container);
+            else if (currentView === 'day') renderDayViewFull(container);
+            else if (currentView === 'list') {
+                openListFilters();
+                renderListView();
+            }
+        }
+
+        function getEventsForDate(date) {
+            const dateStr = getLocalDateString(date);
+            let dayEvents = events.filter(e => e.fecha === dateStr || e.date === dateStr);
+            if (activeFilter) {
+                dayEvents = dayEvents.filter(e => e.materia === activeFilter || e.subject === activeFilter);
+            }
+            return dayEvents;
+        }
+
+        function renderMonthView(container) {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+
+            let html = `<div class="grid grid-cols-7 border-b bg-slate-50">`;
+            dayNamesShort.forEach(d => {
+                html += `<div class="py-3 text-center text-[11px] font-semibold text-slate-500 uppercase">${d}</div>`;
+            });
+            html += `</div><div class="grid grid-cols-7 bg-slate-200 gap-px">`;
+
+            for (let i = 0; i < startOffset; i++) {
+                html += `<div class="bg-white calendar-cell"></div>`;
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const date = new Date(year, month, d);
+                const dateStr = getLocalDateString(date);
+                const dayEvents = getEventsForDate(date);
+                const isToday = getLocalDateString(new Date()) === dateStr;
+                const dayOfWeek = date.getDay();
+                const isWeekendDay = dayOfWeek === 0 || dayOfWeek === 6;
+                
+                html += `<div class="bg-white calendar-cell p-2 cursor-pointer hover:bg-blue-50" onclick="openDayView('${dateStr}')">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full ${isToday ? 'bg-blue-600 text-white' : (isWeekendDay ? 'text-red-500' : '')}">${d}</span>
+                    </div>
+                    <div class="space-y-1 overflow-y-auto max-h-[55px] hide-scrollbar">`;
+                
+                dayEvents.slice(0, 3).forEach(e => {
+                    let cls = 'bg-slate-100';
+                    if ((e.tipo || e.type) === 'prueba') cls = 'event-prueba';
+                    else if ((e.tipo || e.type) === 'tp') cls = 'event-tp';
+                    else if ((e.tipo || e.type) === 'obligacion') cls = 'event-obligacion';
+                    html += `<div class="text-[9px] px-1.5 py-1 rounded ${cls} truncate">${e.titulo || e.title}</div>`;
+                });
+                
+                html += `</div></div>`;
+            }
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function renderWeekView(container) {
+            const start = new Date(currentDate);
+            const day = start.getDay() || 7;
+            if(day !== 1) start.setDate(start.getDate() - (day - 1));
+
+            const weekDays = [];
+            for(let i = 0; i < 7; i++) {
+                const d = new Date(start);
+                d.setDate(start.getDate() + i);
+                weekDays.push(d);
+            }
+
+            let html = `<div class="overflow-x-auto"><div class="min-w-[700px]"><div class="grid grid-cols-8 border-b bg-slate-50 sticky top-0">`;
+            html += `<div class="p-3 text-[10px] font-semibold">Hora</div>`;
+            
+            weekDays.forEach(d => {
+                const isToday = getLocalDateString(new Date()) === getLocalDateString(d);
+                html += `<div class="p-3 text-center border-r ${isToday ? 'bg-blue-50' : ''}">
+                    <div class="text-[10px] uppercase">${dayNamesShort[d.getDay()]}</div>
+                    <div class="text-lg font-bold ${isToday ? 'text-blue-600' : ''}">${d.getDate()}</div>
+                </div>`;
+            });
+            html += `</div>`;
+
+            [0, 1, 2, 3, 4, 5, 7, 8, 9, 10].forEach(slotIdx => {
+                html += `<div class="grid grid-cols-8 border-b min-h-[55px]">`;
+                html += `<div class="p-2 text-[10px] text-slate-400 border-r bg-slate-50 flex items-center justify-center">${timeLabels[slotIdx]}</div>`;
+                
+                weekDays.forEach((d, dayIdx) => {
+                    if (dayIdx > 4) {
+                        html += `<div class="border-r bg-slate-50"></div>`;
+                        return;
+                    }
+                    
+                    const subject = timetable[dayIdx][slotIdx];
+                    const dateStr = getLocalDateString(d);
+                    const slotEvents = events.filter(e => {
+                        if ((e.fecha || e.date) !== dateStr) return false;
+                        if (e.horario || e.timeSlot) {
+                            const [eDay, eSlot] = (e.horario || e.timeSlot).split('-').map(Number);
+                            return eDay === dayIdx && eSlot === slotIdx;
+                        }
+                        return false;
+                    });
+                    
+                    let content = '';
+                    if (subject && allSubjectsIncludingComedor[subject]) {
+                        const config = allSubjectsIncludingComedor[subject];
+                        content = `<div class="h-full flex flex-col items-center justify-center opacity-50">
+                            <i class="fa-solid ${config.icon} ${config.color.split(' ')[1]} text-sm"></i>
+                            <span class="text-[9px] ${config.color.split(' ')[1]}">${subject}</span>
+                        </div>`;
+                    }
+                    
+                    let badges = '';
+                    slotEvents.forEach(e => {
+                        let color = (e.tipo || e.type) === 'prueba' ? 'bg-red-500' : ((e.tipo || e.type) === 'tp' ? 'bg-blue-500' : 'bg-amber-500');
+                        badges += `<div class="${color} text-white text-[9px] px-2 py-1 rounded truncate">${e.titulo || e.title}</div>`;
+                    });
+                    
+                    html += `<div class="border-r relative hover:bg-blue-50 cursor-pointer" onclick="openDayView('${dateStr}')">${content}${badges ? `<div class="absolute inset-0 flex flex-col justify-center items-center gap-1 p-1">${badges}</div>` : ''}</div>`;
+                });
+                
+                html += `</div>`;
+            });
+            
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+
+        function renderDayViewFull(container) {
+            const dateStr = getLocalDateString(currentDate);
+            container.innerHTML = `<div class="p-8 text-center">
+                <i class="fa-regular fa-calendar-day text-6xl text-slate-300 mb-4"></i>
+                <p class="text-slate-500">Click en un día del calendario para ver detalles</p>
+                <button onclick="openDayView('${dateStr}')" class="mt-4 px-6 py-3 bg-blue-600 text-white rounded-xl btn-press">Ver día</button>
+            </div>`;
+        }
+
+        function renderDayViewContent(dateStr) {
+            const container = document.getElementById('day-view-content');
+            const dayOfWeek = getDayOfWeek(dateStr);
+            
+            // CORRECT: Weekend is Saturday (6) or Sunday (0)
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                container.innerHTML = `<div class="text-center py-12">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-slate-100 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-calendar-xmark text-4xl text-slate-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Fin de Semana</h3>
+                    <p class="text-slate-500">No hay clases</p>
+                </div>`;
+                return;
+            }
+            
+            const timetableIndex = getTimetableIndex(dateStr);
+            const daySchedule = timetable[timetableIndex];
+            const dayEvents = getEventsForDate(parseLocalDate(dateStr));
+            
+            let html = '<div class="space-y-4">';
+            
+            daySchedule.forEach((subject, slotIndex) => {
+                if (!subject) return;
+                
+                const config = allSubjectsIncludingComedor[subject];
+                const slotEvents = dayEvents.filter(e => {
+                    if (e.horario || e.timeSlot) {
+                        const [eDay, eSlot] = (e.horario || e.timeSlot).split('-').map(Number);
+                        return eDay === timetableIndex && eSlot === slotIndex;
+                    }
+                    return false;
+                });
+                
+                html += `<div class="border rounded-xl p-4">
+                    <div class="flex gap-4">
+                        <div class="w-16 h-16 ${config.color} rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid ${config.icon} text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between mb-2">
+                                <div>
+                                    <h4 class="font-bold">${subject}</h4>
+                                    <p class="text-sm text-slate-500">${timeLabels[slotIndex]}</p>
+                                </div>
+                                ${slotEvents.length > 0 ? `<span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-semibold">${slotEvents.length}</span>` : ''}
+                            </div>`;
+                
+                if (slotEvents.length > 0) {
+                    html += '<div class="space-y-2">';
+                    slotEvents.forEach(e => {
+                        let cls = 'event-prueba';
+                        if ((e.tipo || e.type) === 'tp') cls = 'event-tp';
+                        if ((e.tipo || e.type) === 'obligacion') cls = 'event-obligacion';
+                        
+                        html += `<div class="${cls} rounded-xl p-3">
+                            <div class="flex justify-between">
+                                <h5 class="font-semibold">${e.titulo || e.title}</h5>
+                                <button onclick="openCreateModal('${e.fecha || e.date}', '${e.id}')" class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-pen"></i></button>
+                            </div>
+                            ${e.modalidad ? `<p class="text-xs text-slate-500 mt-1">${e.modalidad}</p>` : ''}
+                            ${e.temas || e.topics ? `<p class="text-sm mt-2">${e.temas || e.topics}</p>` : ''}
+                            ${e.archivo ? `<a href="${e.archivo}" target="_blank" class="text-xs text-blue-600 mt-2 inline-block"><i class="fa-solid fa-paperclip"></i> Ver archivo</a>` : ''}
+                        </div>`;
+                    });
+                    html += '</div>';
+                } else {
+                    html += `<p class="text-sm text-slate-400 mt-2">Sin actividades</p>`;
+                }
+                
+                html += `</div></div></div>`;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderListView() {
+            const container = document.getElementById('calendar-content');
+            
+            let filtered = [...events];
+            
+            if (listFilters.month !== 'all') {
+                filtered = filtered.filter(e => {
+                    const d = parseLocalDate(e.fecha || e.date);
+                    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` === listFilters.month;
+                });
+            }
+            
+            if (listFilters.subject !== 'all') {
+                filtered = filtered.filter(e => (e.materia || e.subject) === listFilters.subject);
+            }
+            
+            filtered = filtered.filter(e => listFilters.types.includes(e.tipo || e.type));
+            
+            filtered.sort((a, b) => {
+                const aDate = parseLocalDate(a.fecha || a.date);
+                const bDate = parseLocalDate(b.fecha || b.date);
+                return listFilters.sort === 'asc' ? aDate - bDate : bDate - aDate;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-16">
+                    <i class="fa-regular fa-calendar-xmark text-4xl text-slate-300 mb-4"></i>
+                    <p class="text-slate-500">Sin actividades</p>
+                </div>`;
+                return;
+            }
+
+            let html = '<div class="divide-y">';
+            filtered.forEach(e => {
+                const d = parseLocalDate(e.fecha || e.date);
+                const tipo = e.tipo || e.type;
+                const materia = e.materia || e.subject;
+                
+                let typeInfo = { icon: 'fa-pen-to-square', color: 'text-red-600', bg: 'bg-red-50' };
+                if (tipo === 'tp') typeInfo = { icon: 'fa-folder-open', color: 'text-blue-600', bg: 'bg-blue-50' };
+                if (tipo === 'obligacion') typeInfo = { icon: 'fa-bell', color: 'text-amber-600', bg: 'bg-amber-50' };
+                
+                const config = subjectsConfig[materia] || { color: 'bg-slate-100', text: 'text-slate-800', icon: 'fa-book' };
+
+                html += `<div class="p-4 hover:bg-slate-50">
+                    <div class="flex gap-4">
+                        <div class="w-14 h-14 ${typeInfo.bg} rounded-xl border flex items-center justify-center flex-shrink-0">
+                            <div class="text-center">
+                                <div class="text-[10px] uppercase">${d.toLocaleDateString('es-ES', { month: 'short' })}</div>
+                                <div class="text-xl font-bold">${d.getDate()}</div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <h4 class="font-bold">${e.titulo || e.title}</h4>
+                                <div class="flex gap-2">
+                                    ${e.archivo ? `<a href="${e.archivo}" target="_blank" class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i class="fa-solid fa-paperclip"></i></a>` : ''}
+                                    <button onclick="openCreateModal('${e.fecha || e.date}', '${e.id}')" class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="deleteEvent('${e.id}')" class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-red-500"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 mt-2">
+                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold ${config.color} ${config.text}"><i class="fa-solid ${config.icon} mr-1"></i>${materia}</span>
+                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold ${typeInfo.bg} ${typeInfo.color}"><i class="fa-solid ${typeInfo.icon} mr-1"></i>${tipo.toUpperCase()}</span>
+                            </div>
+                            ${e.temas || e.topics ? `<p class="text-sm text-slate-500 mt-2">${e.temas || e.topics}</p>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // ============================================
+        // TOAST
+        // ============================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let icon = 'fa-circle-check';
+            if (type === 'error') icon = 'fa-circle-exclamation';
+            if (type === 'warning') icon = 'fa-triangle-exclamation';
+            
+            toast.className = `toast bg-slate-800 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 w-full`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-green-400"></i><span class="text-sm font-medium">${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
     </script>
 </body>
 </html>
+
+
+
+              <script>
+                              // Funciones auxiliares para manejo LOCAL de fechas (sin timezone)
+function getLocalDateString(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function parseLocalDate(dateString) {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day); // Constructor local, no UTC
+}
+
+function getDayOfWeek(dateString) {
+    const date = parseLocalDate(dateString);
+    return date.getDay(); // 0=Domingo, 1=Lunes, ..., 6=Sábado
+}
+
+function isWeekend(dateString) {
+    const day = getDayOfWeek(dateString);
+    return day === 0 || day === 6; // Domingo o Sábado
+}
+
+
+              </script>
+                        </body>
+                        </html>
+                    
