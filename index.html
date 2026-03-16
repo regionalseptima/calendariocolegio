@@ -14,7 +14,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,46 +26,33 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
                     },
                     colors: {
                         primary: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            200: '#c7d2fe',
-                            300: '#a5b4fc',
-                            400: '#818cf8',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            800: '#3730a3',
-                            900: '#312e81',
+                            50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
+                            400: '#818cf8', 500: '#6366f1', 600: '#4f46e5',
+                            700: '#4338ca', 800: '#3730a3', 900: '#312e81', 950: '#1e1b4b',
                         },
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.3s ease-out',
-                        'slide-up': 'slideUp 0.3s ease-out',
-                        'slide-down': 'slideDown 0.3s ease-out',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'slide-down': 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                         'scale-in': 'scaleIn 0.2s ease-out',
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slight': 'bounceSlight 0.5s ease-in-out',
                     },
                     keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        },
-                        slideDown: {
-                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        },
-                        scaleIn: {
-                            '0%': { transform: 'scale(0.95)', opacity: '0' },
-                            '100%': { transform: 'scale(1)', opacity: '1' },
-                        },
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(30px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        slideDown: { '0%': { transform: 'translateY(-30px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        scaleIn: { '0%': { transform: 'scale(0.9)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } },
+                        bounceSlight: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-5px)' } },
+                    },
+                    boxShadow: {
+                        'glow': '0 0 40px rgba(79, 70, 229, 0.3)',
+                        'glow-lg': '0 0 60px rgba(79, 70, 229, 0.4)',
                     },
                 },
             },
@@ -74,105 +61,54 @@
     
     <style>
         /* Base Styles */
-        * {
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
+        * { -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        html { scroll-behavior: smooth; }
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
             min-height: 100vh;
             min-height: 100dvh;
+            overflow-x: hidden;
         }
         
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 3px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        
-        /* Subject Colors */
-        .bg-math { background-color: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
-        .bg-lengua { background-color: #fef9c3; color: #a16207; border-color: #fef08a; }
-        .bg-ingles { background-color: #f3e8ff; color: #7e22ce; border-color: #e9d5ff; }
-        .bg-bio { background-color: #dcfce7; color: #15803d; border-color: #bbf7d0; }
-        .bg-fisico { background-color: #ffedd5; color: #c2410c; border-color: #fed7aa; }
-        .bg-historia { background-color: #fed7aa; color: #9a3412; border-color: #fdba74; }
-        .bg-construccion { background-color: #f1f5f9; color: #475569; border-color: #cbd5e1; }
-        .bg-tecno { background-color: #cffafe; color: #0e7490; border-color: #a5f3fc; }
-        .bg-teatro { background-color: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+        /* Subject Colors - Professional Palette */
+        .bg-math { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #1d4ed8; border-color: #3b82f6; }
+        .bg-lengua { background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%); color: #a16207; border-color: #ca8a04; }
+        .bg-ingles { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); color: #7e22ce; border-color: #a855f7; }
+        .bg-bio { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #15803d; border-color: #22c55e; }
+        .bg-fisico { background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%); color: #c2410c; border-color: #f97316; }
+        .bg-historia { background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); color: #9a3412; border-color: #ea580c; }
+        .bg-construccion { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); color: #475569; border-color: #64748b; }
+        .bg-tecno { background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%); color: #0e7490; border-color: #06b6d4; }
+        .bg-teatro { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #b91c1c; border-color: #ef4444; }
+        .bg-comedor { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; border-color: #f59e0b; }
         
         /* Event Type Colors */
-        .event-prueba { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-left: 3px solid #ef4444; }
-        .event-tp { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left: 3px solid #3b82f6; }
-        .event-obligacion { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 3px solid #f59e0b; }
+        .event-prueba { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-left: 4px solid #ef4444; }
+        .event-tp { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left: 4px solid #3b82f6; }
+        .event-obligacion { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; }
         
         /* Modal Styles */
-        .modal {
-            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                        visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .modal-content {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                        opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .modal-active .modal-content {
-            transform: scale(1) translateX(0);
-            opacity: 1;
-        }
-        
-        .modal:not(.modal-active) .modal-content {
-            transform: scale(0.95) translateX(20px);
-            opacity: 0;
-        }
+        .modal { transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-content { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-active .modal-content { transform: scale(1) translateX(0); opacity: 1; }
+        .modal:not(.modal-active) .modal-content { transform: scale(0.92) translateX(30px); opacity: 0; }
         
         /* Toast Animation */
-        .toast {
-            transform: translateY(100px) scale(0.9);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .toast.show {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
+        .toast { transform: translateY(100px) scale(0.9); opacity: 0; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .toast.show { transform: translateY(0) scale(1); opacity: 1; }
         
         /* Loading Spinner */
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .spinner {
-            animation: spin 1s linear infinite;
-        }
+        .spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         
         /* Print Styles */
         @media print {
@@ -183,58 +119,35 @@
         }
         
         /* Safe Area for Mobile */
-        .safe-top {
-            padding-top: env(safe-area-inset-top);
-        }
-        
-        .safe-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
+        .safe-top { padding-top: env(safe-area-inset-top); }
+        .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
         
         /* Glass Effect */
         .glass {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
         }
         
         /* Card Hover Effects */
-        .card-hover {
-            transition: all 0.2s ease;
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12); }
         
         /* Button Press Effect */
-        .btn-press {
-            transition: transform 0.1s ease;
-        }
-        
-        .btn-press:active {
-            transform: scale(0.96);
-        }
+        .btn-press { transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-press:active { transform: scale(0.94); }
+        .btn-press:hover { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); }
         
         /* Input Focus Ring */
-        .input-focus:focus {
-            outline: none;
-            ring: 2px;
-            ring-color: #4f46e5;
-            ring-offset: 2px;
-        }
+        .input-focus:focus { outline: none; ring: 2px; ring-color: #4f46e5; ring-offset: 2px; }
         
         /* Calendar Cell */
-        .calendar-cell {
-            min-height: 100px;
-        }
+        .calendar-cell { min-height: 110px; }
+        @media (max-width: 640px) { .calendar-cell { min-height: 75px; } }
         
-        @media (max-width: 640px) {
-            .calendar-cell {
-                min-height: 70px;
-            }
-        }
+        /* Chip Selection */
+        .chip { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        .chip.selected { background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: white; border-color: #4f46e5; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4); }
         
         /* Skeleton Loading */
         .skeleton {
@@ -242,57 +155,79 @@
             background-size: 200% 100%;
             animation: skeleton-loading 1.5s infinite;
         }
+        @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         
-        @keyframes skeleton-loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
-        /* Floating Action Button */
-        .fab {
-            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Floating Label */
+        .floating-label { position: relative; }
+        .floating-label input:focus ~ label,
+        .floating-label input:not(:placeholder-shown) ~ label,
+        .floating-label select:focus ~ label,
+        .floating-label select:valid ~ label {
+            transform: translateY(-28px) scale(0.85);
+            color: #4f46e5;
+            font-weight: 600;
         }
         
-        .fab:hover {
-            box-shadow: 0 8px 30px rgba(79, 70, 229, 0.5);
-            transform: translateY(-2px);
-        }
+        /* Time Slot Selection */
+        .time-slot { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .time-slot.selected { background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: white; border-color: #4f46e5; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4); }
         
-        .fab:active {
-            transform: scale(0.95);
-        }
+        /* Smooth Page Transitions */
+        .page-transition { animation: fadeIn 0.4s ease-out; }
         
-        /* Chip Selection */
-        .chip {
-            transition: all 0.2s ease;
-        }
-        
-        .chip.selected {
-            background: #4f46e5;
-            color: white;
+        /* Custom Radio Buttons */
+        .custom-radio:checked + div {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
             border-color: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
         }
+        .custom-radio:checked + div i { color: white; }
         
         /* Progress Bar */
-        .progress-bar {
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        .progress-bar { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* Day View Card */
+        .day-card { 
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .day-card:hover {
+            border-color: #4f46e5;
+            box-shadow: 0 8px 30px rgba(79, 70, 229, 0.15);
+            transform: translateX(4px);
+        }
+        
+        /* Event Badge */
+        .event-badge {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.5);
         }
     </style>
 </head>
 <body class="text-slate-800 antialiased">
 
     <!-- Loading Screen -->
-    <div id="loading-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-primary-50 to-indigo-100 transition-opacity duration-500">
+    <div id="loading-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-indigo-100 transition-opacity duration-700">
         <div class="text-center p-8">
-            <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-2xl spinner">
-                <i class="fa-solid fa-calendar-check text-4xl text-white"></i>
+            <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary-500 via-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl spinner">
+                <i class="fa-solid fa-calendar-check text-5xl text-white"></i>
             </div>
-            <h1 class="text-2xl font-bold text-slate-800 mb-2">Agenda 3RO A</h1>
-            <p class="text-slate-500 mb-4">Colegio Fasta San Vicente de Paúl</p>
-            <div class="flex items-center justify-center gap-2 text-sm text-slate-400">
-                <i class="fa-solid fa-circle-notch spinner"></i>
-                <span id="loading-text">Sincronizando datos...</span>
+            <h1 class="text-3xl font-black text-slate-800 mb-2 tracking-tight">Agenda 3RO A</h1>
+            <p class="text-slate-500 mb-6 font-medium">Colegio Fasta San Vicente de Paúl</p>
+            <div class="flex items-center justify-center gap-3 text-sm text-slate-400 bg-white px-6 py-3 rounded-2xl shadow-lg">
+                <i class="fa-solid fa-circle-notch spinner text-primary-500"></i>
+                <span id="loading-text" class="font-medium">Sincronizando datos...</span>
             </div>
         </div>
     </div>
@@ -304,64 +239,65 @@
     <div id="app" class="flex flex-col h-screen hidden">
         
         <!-- Desktop Sidebar -->
-        <aside class="hidden lg:flex flex-col w-72 bg-white border-r border-slate-200 overflow-hidden">
+        <aside class="hidden lg:flex flex-col w-80 bg-white border-r border-slate-200 overflow-hidden shadow-xl">
             <!-- Logo -->
-            <div class="p-6 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <span class="text-white font-bold text-lg">3A</span>
+            <div class="p-6 border-b border-slate-100 bg-gradient-to-br from-slate-50 to-white">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-gradient-to-br from-primary-500 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <span class="text-white font-black text-xl">3A</span>
                     </div>
                     <div>
-                        <h1 class="font-bold text-slate-800">Agenda Escolar</h1>
-                        <p class="text-xs text-slate-500">2026 | 3RO A</p>
+                        <h1 class="font-black text-slate-800 text-lg tracking-tight">Agenda Escolar</h1>
+                        <p class="text-xs text-slate-500 font-semibold">2026 | 3RO A</p>
                     </div>
                 </div>
             </div>
             
             <!-- Quick Stats -->
-            <div class="p-4 bg-gradient-to-br from-primary-50 to-indigo-50 border-b border-slate-100">
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="text-center p-2 bg-white rounded-lg shadow-sm">
-                        <div class="text-lg font-bold text-red-500" id="stat-pruebas">0</div>
-                        <div class="text-[10px] text-slate-500 uppercase">Pruebas</div>
+            <div class="p-5 bg-gradient-to-br from-primary-50 via-indigo-50 to-purple-50 border-b border-slate-100">
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Resumen del Mes</h3>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="text-center p-3 bg-white rounded-2xl shadow-md card-hover">
+                        <div class="text-2xl font-black text-red-500" id="stat-pruebas">0</div>
+                        <div class="text-[10px] text-slate-500 uppercase font-bold mt-1">Pruebas</div>
                     </div>
-                    <div class="text-center p-2 bg-white rounded-lg shadow-sm">
-                        <div class="text-lg font-bold text-blue-500" id="stat-tps">0</div>
-                        <div class="text-[10px] text-slate-500 uppercase">TPs</div>
+                    <div class="text-center p-3 bg-white rounded-2xl shadow-md card-hover">
+                        <div class="text-2xl font-black text-blue-500" id="stat-tps">0</div>
+                        <div class="text-[10px] text-slate-500 uppercase font-bold mt-1">TPs</div>
                     </div>
-                    <div class="text-center p-2 bg-white rounded-lg shadow-sm">
-                        <div class="text-lg font-bold text-amber-500" id="stat-obligaciones">0</div>
-                        <div class="text-[10px] text-slate-500 uppercase">Oblig.</div>
+                    <div class="text-center p-3 bg-white rounded-2xl shadow-md card-hover">
+                        <div class="text-2xl font-black text-amber-500" id="stat-obligaciones">0</div>
+                        <div class="text-[10px] text-slate-500 uppercase font-bold mt-1">Oblig.</div>
                     </div>
                 </div>
             </div>
             
             <!-- Subject Filters -->
-            <div class="flex-1 overflow-y-auto p-4">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Filtrar por Materia</h3>
-                    <button onclick="resetFilters()" class="text-[10px] text-primary-600 hover:text-primary-700 font-medium">
+            <div class="flex-1 overflow-y-auto p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">Filtrar por Materia</h3>
+                    <button onclick="resetFilters()" class="text-[10px] text-primary-600 hover:text-primary-700 font-bold transition-colors">
                         <i class="fa-solid fa-rotate-left mr-1"></i>Reset
                     </button>
                 </div>
-                <div id="subject-filters-desktop" class="space-y-1.5"></div>
+                <div id="subject-filters-desktop" class="space-y-2"></div>
             </div>
             
             <!-- Sync Status -->
-            <div class="p-4 border-t border-slate-100 bg-slate-50">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-medium text-slate-500">Estado</span>
-                    <span id="sync-status-desktop" class="flex items-center gap-1.5 text-xs">
-                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                        <span class="text-green-600 font-medium">En línea</span>
+            <div class="p-5 border-t border-slate-100 bg-gradient-to-br from-slate-50 to-white">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold text-slate-500 uppercase">Estado</span>
+                    <span id="sync-status-desktop" class="flex items-center gap-2 text-xs">
+                        <span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></span>
+                        <span class="text-green-600 font-bold">En línea</span>
                     </span>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="syncData()" class="flex-1 py-2 px-3 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 btn-press">
-                        <i class="fa-solid fa-rotate mr-1"></i>Sincronizar
+                    <button onclick="syncData()" class="flex-1 py-2.5 px-3 bg-white border-2 border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:border-primary-300 btn-press transition-all">
+                        <i class="fa-solid fa-rotate mr-1.5"></i>Sincronizar
                     </button>
-                    <button onclick="exportData()" class="flex-1 py-2 px-3 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 btn-press">
-                        <i class="fa-solid fa-download mr-1"></i>Exportar
+                    <button onclick="exportData()" class="flex-1 py-2.5 px-3 bg-white border-2 border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:border-primary-300 btn-press transition-all">
+                        <i class="fa-solid fa-download mr-1.5"></i>Exportar
                     </button>
                 </div>
             </div>
@@ -371,75 +307,81 @@
         <main class="flex-1 flex flex-col overflow-hidden">
             
             <!-- Mobile Header -->
-            <header class="lg:hidden glass safe-top border-b border-slate-200 z-30">
-                <div class="px-4 py-3">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-2">
-                            <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
-                                <span class="text-white font-bold text-sm">3A</span>
+            <header class="lg:hidden glass safe-top border-b border-slate-200/50 z-30 shadow-lg">
+                <div class="px-4 py-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 bg-gradient-to-br from-primary-500 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                <span class="text-white font-black text-base">3A</span>
                             </div>
                             <div>
-                                <h1 class="font-bold text-slate-800 text-sm">Agenda</h1>
-                                <p class="text-[10px] text-slate-500">2026</p>
+                                <h1 class="font-black text-slate-800 text-base tracking-tight">Agenda</h1>
+                                <p class="text-[10px] text-slate-500 font-bold">2026</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="syncData()" class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 btn-press">
+                            <button onclick="syncData()" class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center text-slate-600 btn-press shadow-md">
                                 <i class="fa-solid fa-rotate text-sm"></i>
                             </button>
-                            <button onclick="openCreateModal()" class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center text-white shadow-lg btn-press">
+                            <button onclick="openCreateModal()" class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 via-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg btn-press">
                                 <i class="fa-solid fa-plus text-sm"></i>
                             </button>
                         </div>
                     </div>
                     
                     <!-- View Switcher -->
-                    <div class="flex items-center justify-between bg-slate-100 rounded-xl p-1">
-                        <button onclick="changeDate(-1)" class="w-10 h-10 flex items-center justify-center text-slate-500 rounded-lg btn-press">
+                    <div class="flex items-center justify-between bg-gradient-to-br from-slate-100 to-slate-50 rounded-2xl p-1.5 shadow-inner">
+                        <button onclick="changeDate(-1)" class="w-11 h-11 flex items-center justify-center text-slate-500 rounded-xl btn-press bg-white shadow-sm">
                             <i class="fa-solid fa-chevron-left text-sm"></i>
                         </button>
-                        <div class="flex bg-white rounded-lg p-0.5 shadow-sm">
-                            <button onclick="switchView('month')" id="btn-month" class="px-4 py-2 text-[11px] font-bold rounded-lg transition-all bg-primary-50 text-primary-600">Mes</button>
-                            <button onclick="switchView('week')" id="btn-week" class="px-4 py-2 text-[11px] font-bold rounded-lg transition-all text-slate-500">Sem</button>
-                            <button onclick="switchView('list')" id="btn-list" class="px-4 py-2 text-[11px] font-bold rounded-lg transition-all text-slate-500">Lista</button>
+                        <div class="flex bg-white rounded-xl p-1 shadow-md">
+                            <button onclick="switchView('month')" id="btn-month" class="px-4 py-2.5 text-[11px] font-black rounded-xl transition-all bg-gradient-to-br from-primary-500 to-indigo-600 text-white shadow-md">Mes</button>
+                            <button onclick="switchView('week')" id="btn-week" class="px-4 py-2.5 text-[11px] font-black rounded-xl transition-all text-slate-500 hover:text-slate-700">Sem</button>
+                            <button onclick="switchView('day')" id="btn-day" class="px-4 py-2.5 text-[11px] font-black rounded-xl transition-all text-slate-500 hover:text-slate-700">Día</button>
+                            <button onclick="switchView('list')" id="btn-list" class="px-4 py-2.5 text-[11px] font-black rounded-xl transition-all text-slate-500 hover:text-slate-700">Lista</button>
                         </div>
-                        <button onclick="changeDate(1)" class="w-10 h-10 flex items-center justify-center text-slate-500 rounded-lg btn-press">
+                        <button onclick="changeDate(1)" class="w-11 h-11 flex items-center justify-center text-slate-500 rounded-xl btn-press bg-white shadow-sm">
                             <i class="fa-solid fa-chevron-right text-sm"></i>
                         </button>
                     </div>
                     
                     <!-- Date Display -->
-                    <div class="text-center mt-2">
-                        <h2 id="current-date-display-mobile" class="text-base font-bold text-slate-800">Enero 2026</h2>
-                        <button onclick="goToToday()" class="text-[10px] text-primary-600 font-medium">Ir a hoy</button>
+                    <div class="text-center mt-3">
+                        <h2 id="current-date-display-mobile" class="text-lg font-black text-slate-800 tracking-tight">Enero 2026</h2>
+                        <button onclick="goToToday()" class="text-[10px] text-primary-600 font-bold hover:text-primary-700 transition-colors">
+                            <i class="fa-solid fa-location-crosshairs mr-1"></i>Ir a hoy
+                        </button>
                     </div>
                 </div>
             </header>
 
             <!-- Desktop Header -->
-            <header class="hidden lg:flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
+            <header class="hidden lg:flex items-center justify-between px-8 py-5 bg-white border-b border-slate-200 shadow-sm">
                 <div>
-                    <div class="flex items-center gap-4">
-                        <button onclick="changeDate(-1)" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl btn-press">
+                    <div class="flex items-center gap-5">
+                        <button onclick="changeDate(-1)" class="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-2xl btn-press transition-all">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>
                         <div>
-                            <h2 id="current-date-display-desktop" class="text-2xl font-bold text-slate-800">Enero 2026</h2>
-                            <button onclick="goToToday()" class="text-sm text-primary-600 hover:text-primary-700 font-medium">Ir a hoy</button>
+                            <h2 id="current-date-display-desktop" class="text-3xl font-black text-slate-800 tracking-tight">Enero 2026</h2>
+                            <button onclick="goToToday()" class="text-sm text-primary-600 hover:text-primary-700 font-bold transition-colors">
+                                <i class="fa-solid fa-location-crosshairs mr-1.5"></i>Ir a hoy
+                            </button>
                         </div>
-                        <button onclick="changeDate(1)" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl btn-press">
+                        <button onclick="changeDate(1)" class="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-2xl btn-press transition-all">
                             <i class="fa-solid fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-3">
-                    <div class="flex bg-slate-100 rounded-xl p-1">
-                        <button onclick="switchView('month')" id="btn-month-desktop" class="px-4 py-2 text-sm font-bold rounded-lg transition-all bg-white shadow text-primary-600">Mes</button>
-                        <button onclick="switchView('week')" id="btn-week-desktop" class="px-4 py-2 text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700">Semana</button>
-                        <button onclick="switchView('list')" id="btn-list-desktop" class="px-4 py-2 text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700">Lista</button>
+                <div class="flex items-center gap-4">
+                    <div class="flex bg-slate-100 rounded-2xl p-1.5 shadow-inner">
+                        <button onclick="switchView('month')" id="btn-month-desktop" class="px-5 py-2.5 text-sm font-black rounded-xl transition-all bg-white shadow-md text-primary-600">Mes</button>
+                        <button onclick="switchView('week')" id="btn-week-desktop" class="px-5 py-2.5 text-sm font-black rounded-xl transition-all text-slate-500 hover:text-slate-700">Semana</button>
+                        <button onclick="switchView('day')" id="btn-day-desktop" class="px-5 py-2.5 text-sm font-black rounded-xl transition-all text-slate-500 hover:text-slate-700">Día</button>
+                        <button onclick="switchView('list')" id="btn-list-desktop" class="px-5 py-2.5 text-sm font-black rounded-xl transition-all text-slate-500 hover:text-slate-700">Lista</button>
                     </div>
-                    <button onclick="openCreateModal()" class="px-5 py-2.5 bg-gradient-to-r from-primary-500 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl btn-press flex items-center gap-2">
+                    <button onclick="openCreateModal()" class="px-6 py-3 bg-gradient-to-r from-primary-500 via-indigo-600 to-purple-600 text-white rounded-2xl font-black shadow-lg hover:shadow-glow btn-press transition-all flex items-center gap-2.5">
                         <i class="fa-solid fa-plus"></i>
                         <span>Nueva Actividad</span>
                     </button>
@@ -447,10 +389,10 @@
             </header>
 
             <!-- Mobile Filter Bar -->
-            <div class="lg:hidden border-b border-slate-200 bg-white z-20">
+            <div class="lg:hidden border-b border-slate-200 bg-white z-20 shadow-md">
                 <div class="px-4 py-3">
                     <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar">
-                        <button onclick="resetFilters()" class="flex-shrink-0 px-4 py-2 bg-slate-100 text-slate-600 rounded-full text-xs font-bold border border-slate-200 chip">
+                        <button onclick="resetFilters()" class="flex-shrink-0 px-4 py-2.5 bg-gradient-to-br from-slate-100 to-slate-50 text-slate-600 rounded-full text-xs font-black border-2 border-slate-200 chip shadow-sm">
                             Todas
                         </button>
                         <div id="subject-filters-mobile" class="flex gap-2"></div>
@@ -459,175 +401,178 @@
             </div>
 
             <!-- Calendar Content -->
-            <div class="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-6" id="calendar-main">
-                <div id="calendar-content" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"></div>
+            <div class="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 lg:p-6" id="calendar-main">
+                <div id="calendar-content" class="bg-white rounded-3xl shadow-xl border border-slate-200/50 overflow-hidden"></div>
             </div>
         </main>
     </div>
 
     <!-- Create/Edit Modal -->
     <div id="event-modal" class="modal opacity-0 pointer-events-none fixed inset-0 z-50 flex items-end lg:items-center justify-center">
-        <div class="modal-overlay absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
-        <div class="modal-content bg-white w-full lg:max-w-2xl lg:rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col lg:max-h-[90vh] h-[95vh] lg:h-auto transform translate-x-4 lg:translate-x-0">
+        <div class="modal-overlay absolute inset-0 bg-slate-900/70 backdrop-blur-md" onclick="closeModal()"></div>
+        <div class="modal-content bg-white w-full lg:max-w-3xl lg:rounded-3xl shadow-2xl z-50 overflow-hidden flex flex-col lg:max-h-[90vh] h-[95vh] lg:h-auto">
             
             <!-- Modal Header -->
-            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                        <i class="fa-regular fa-calendar-plus text-white"></i>
+            <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-slate-50">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primary-500 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fa-regular fa-calendar-plus text-white text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800" id="modal-title">Nueva Actividad</h3>
-                        <p class="text-xs text-slate-500">Completa los detalles</p>
+                        <h3 class="text-xl font-black text-slate-800 tracking-tight" id="modal-title">Nueva Actividad</h3>
+                        <p class="text-xs text-slate-500 font-medium" id="modal-subtitle">Completa los detalles</p>
                     </div>
                 </div>
-                <button onclick="closeModal()" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 btn-press">
+                <button onclick="closeModal()" class="w-11 h-11 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 btn-press transition-all">
                     <i class="fa-solid fa-times"></i>
                 </button>
             </div>
 
             <!-- Modal Body -->
-            <div class="flex-1 overflow-y-auto p-5 lg:p-6">
+            <div class="flex-1 overflow-y-auto p-6 lg:p-8">
                 <form id="event-form" onsubmit="handleFormSubmit(event)">
-                    <input type="hidden" id="event-date">
                     <input type="hidden" id="event-id">
                     
                     <!-- Type Selection -->
-                    <div class="mb-6">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Tipo de Actividad</label>
-                        <div class="grid grid-cols-3 gap-3">
+                    <div class="mb-7">
+                        <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-4">Tipo de Actividad</label>
+                        <div class="grid grid-cols-3 gap-4">
                             <label class="cursor-pointer group">
-                                <input type="radio" name="type" value="prueba" class="peer sr-only" checked onchange="toggleModality(true)">
-                                <div class="p-4 text-center border-2 border-slate-200 rounded-xl peer-checked:border-red-500 peer-checked:bg-red-50 transition-all group-hover:border-red-200 group-hover:shadow-md">
-                                    <i class="fa-solid fa-pen-to-square text-2xl text-slate-400 peer-checked:text-red-500 mb-2 block"></i>
-                                    <span class="text-xs font-bold text-slate-600 peer-checked:text-red-700 block">Prueba</span>
+                                <input type="radio" name="type" value="prueba" class="custom-radio peer sr-only" checked onchange="toggleModality(true)">
+                                <div class="p-5 text-center border-2 border-slate-200 rounded-2xl peer-checked:border-red-500 peer-checked:bg-red-50 transition-all group-hover:border-red-200 group-hover:shadow-lg">
+                                    <i class="fa-solid fa-pen-to-square text-3xl text-slate-400 peer-checked:text-red-500 mb-2 block"></i>
+                                    <span class="text-xs font-black text-slate-600 peer-checked:text-red-700 block">Prueba</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer group">
-                                <input type="radio" name="type" value="tp" class="peer sr-only" onchange="toggleModality(false)">
-                                <div class="p-4 text-center border-2 border-slate-200 rounded-xl peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all group-hover:border-blue-200 group-hover:shadow-md">
-                                    <i class="fa-solid fa-folder-open text-2xl text-slate-400 peer-checked:text-blue-500 mb-2 block"></i>
-                                    <span class="text-xs font-bold text-slate-600 peer-checked:text-blue-700 block">Trabajo Práctico</span>
+                                <input type="radio" name="type" value="tp" class="custom-radio peer sr-only" onchange="toggleModality(false)">
+                                <div class="p-5 text-center border-2 border-slate-200 rounded-2xl peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all group-hover:border-blue-200 group-hover:shadow-lg">
+                                    <i class="fa-solid fa-folder-open text-3xl text-slate-400 peer-checked:text-blue-500 mb-2 block"></i>
+                                    <span class="text-xs font-black text-slate-600 peer-checked:text-blue-700 block">Trabajo Práctico</span>
                                 </div>
                             </label>
                             <label class="cursor-pointer group">
-                                <input type="radio" name="type" value="obligacion" class="peer sr-only" onchange="toggleModality(false)">
-                                <div class="p-4 text-center border-2 border-slate-200 rounded-xl peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all group-hover:border-amber-200 group-hover:shadow-md">
-                                    <i class="fa-solid fa-bell text-2xl text-slate-400 peer-checked:text-amber-500 mb-2 block"></i>
-                                    <span class="text-xs font-bold text-slate-600 peer-checked:text-amber-700 block">Obligación</span>
+                                <input type="radio" name="type" value="obligacion" class="custom-radio peer sr-only" onchange="toggleModality(false)">
+                                <div class="p-5 text-center border-2 border-slate-200 rounded-2xl peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all group-hover:border-amber-200 group-hover:shadow-lg">
+                                    <i class="fa-solid fa-bell text-3xl text-slate-400 peer-checked:text-amber-500 mb-2 block"></i>
+                                    <span class="text-xs font-black text-slate-600 peer-checked:text-amber-700 block">Obligación</span>
                                 </div>
                             </label>
                         </div>
                     </div>
 
                     <!-- Date Selection -->
-                    <div class="mb-5">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                            <i class="fa-regular fa-calendar mr-1.5"></i>Fecha
+                    <div class="mb-6">
+                        <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">
+                            <i class="fa-regular fa-calendar mr-2"></i>Fecha
                         </label>
-                        <input type="date" id="event-date-input" required 
-                            class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-base input-focus">
+                        <input type="date" id="event-date-input" required onchange="onDateChange()"
+                            class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-base font-medium input-focus shadow-sm">
+                        
+                        <!-- Day Schedule Preview -->
+                        <div id="day-schedule-preview" class="mt-4 hidden">
+                            <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">
+                                <i class="fa-regular fa-clock mr-2"></i>Horarios del Día
+                            </label>
+                            <div id="schedule-slots" class="grid grid-cols-2 lg:grid-cols-3 gap-2"></div>
+                        </div>
                     </div>
 
                     <!-- Subject & Time -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                                <i class="fa-solid fa-book mr-1.5"></i>Asignatura
+                            <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">
+                                <i class="fa-solid fa-book mr-2"></i>Asignatura
                             </label>
                             <select id="event-subject" required onchange="updateTimeSlots()" 
-                                class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all bg-white text-base input-focus">
+                                class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all bg-white text-base font-medium input-focus shadow-sm">
                                 <option value="">Seleccionar materia...</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                                <i class="fa-regular fa-clock mr-1.5"></i>Horario
+                            <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">
+                                <i class="fa-regular fa-clock mr-2"></i>Horario
                             </label>
                             <select id="event-time" 
-                                class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all bg-white text-base input-focus">
-                                <option value="">Primero selecciona materia</option>
+                                class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all bg-white text-base font-medium input-focus shadow-sm">
+                                <option value="">Primero selecciona fecha y materia</option>
                             </select>
                         </div>
                     </div>
 
                     <!-- Title -->
-                    <div class="mb-5">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                            <i class="fa-solid fa-heading mr-1.5"></i>Título
+                    <div class="mb-6">
+                        <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">
+                            <i class="fa-solid fa-heading mr-2"></i>Título
                         </label>
                         <input type="text" id="event-title" required 
-                            class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-base input-focus" 
-                            placeholder="Ej: Examen de Ecuaciones">
+                            class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-base font-medium input-focus shadow-sm" 
+                            placeholder="Ej: Examen de Ecuaciones de 2do grado">
                     </div>
 
                     <!-- Modality -->
-                    <div id="modality-group" class="mb-5 p-4 bg-gradient-to-br from-red-50 to-orange-50 rounded-xl border border-red-100">
-                        <label class="block text-xs font-bold text-red-700 uppercase tracking-wider mb-3">
-                            <i class="fa-solid fa-circle-info mr-1.5"></i>Modalidad de Evaluación
+                    <div id="modality-group" class="mb-6 p-5 bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 rounded-2xl border-2 border-red-100">
+                        <label class="block text-xs font-black text-red-700 uppercase tracking-wider mb-4">
+                            <i class="fa-solid fa-circle-info mr-2"></i>Modalidad de Evaluación
                         </label>
-                        <div class="flex gap-4">
-                            <label class="flex items-center gap-2 cursor-pointer group">
-                                <input type="radio" name="modality" value="escrita" checked 
-                                    class="w-5 h-5 text-red-600 focus:ring-red-500">
-                                <span class="text-sm font-medium text-slate-700 group-hover:text-red-700">Escrita</span>
+                        <div class="flex gap-5">
+                            <label class="flex items-center gap-2.5 cursor-pointer group">
+                                <input type="radio" name="modality" value="escrita" checked class="w-5 h-5 text-red-600 focus:ring-red-500">
+                                <span class="text-sm font-bold text-slate-700 group-hover:text-red-700 transition-colors">Escrita</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer group">
-                                <input type="radio" name="modality" value="oral" 
-                                    class="w-5 h-5 text-red-600 focus:ring-red-500">
-                                <span class="text-sm font-medium text-slate-700 group-hover:text-red-700">Oral</span>
+                            <label class="flex items-center gap-2.5 cursor-pointer group">
+                                <input type="radio" name="modality" value="oral" class="w-5 h-5 text-red-600 focus:ring-red-500">
+                                <span class="text-sm font-bold text-slate-700 group-hover:text-red-700 transition-colors">Oral</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer group">
-                                <input type="radio" name="modality" value="practica" 
-                                    class="w-5 h-5 text-red-600 focus:ring-red-500">
-                                <span class="text-sm font-medium text-slate-700 group-hover:text-red-700">Práctica</span>
+                            <label class="flex items-center gap-2.5 cursor-pointer group">
+                                <input type="radio" name="modality" value="practica" class="w-5 h-5 text-red-600 focus:ring-red-500">
+                                <span class="text-sm font-bold text-slate-700 group-hover:text-red-700 transition-colors">Práctica</span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Topics -->
-                    <div class="mb-5">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                            <i class="fa-solid fa-list-check mr-1.5"></i>Temas a Estudiar / Contenido
+                    <div class="mb-6">
+                        <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">
+                            <i class="fa-solid fa-list-check mr-2"></i>Temas a Estudiar / Contenido
                         </label>
                         <textarea id="event-topics" rows="3" 
-                            class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-base resize-none input-focus" 
+                            class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-base font-medium resize-none input-focus shadow-sm" 
                             placeholder="Unidad 1, 2, 3..."></textarea>
                     </div>
 
                     <!-- Google Drive Link -->
-                    <div class="mb-6">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                            <i class="fa-brands fa-google-drive mr-1.5"></i>Material Adjunto (Google Drive)
+                    <div class="mb-7">
+                        <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">
+                            <i class="fa-brands fa-google-drive mr-2"></i>Material Adjunto (Google Drive)
                         </label>
-                        <div class="flex gap-2">
+                        <div class="flex gap-3">
                             <input type="url" id="event-file-url" 
-                                class="flex-1 px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-sm input-focus" 
+                                class="flex-1 px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-sm font-medium input-focus shadow-sm" 
                                 placeholder="https://drive.google.com/...">
                             <button type="button" onclick="openDriveHelp()" 
-                                class="px-4 py-3 bg-red-50 text-red-600 rounded-xl border-2 border-red-200 hover:bg-red-100 btn-press" 
-                                title="Ayuda con Drive">
+                                class="px-5 py-4 bg-gradient-to-br from-red-50 to-red-100 text-red-600 rounded-2xl border-2 border-red-200 hover:bg-red-100 btn-press transition-all">
                                 <i class="fa-solid fa-question"></i>
                             </button>
                         </div>
-                        <div id="file-preview" class="hidden mt-3 p-3 bg-green-50 border border-green-200 rounded-xl">
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-circle-check text-green-600"></i>
-                                <span id="file-preview-text" class="text-sm text-green-700 truncate flex-1"></span>
+                        <div id="file-preview" class="hidden mt-4 p-4 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-circle-check text-green-600 text-lg"></i>
+                                <span id="file-preview-text" class="text-sm font-medium text-green-700 truncate flex-1"></span>
                                 <button type="button" onclick="clearFile()" class="text-red-500 hover:text-red-700 btn-press">
-                                    <i class="fa-solid fa-times"></i>
+                                    <i class="fa-solid fa-times text-lg"></i>
                                 </button>
                             </div>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-2">
-                            <i class="fa-solid fa-info-circle"></i> 
-                            <a href="https://drive.google.com" target="_blank" class="text-primary-600 hover:underline font-medium">Sube tu archivo a Drive</a> y pega el enlace de compartir
+                        <p class="text-[10px] text-slate-400 mt-3 font-medium">
+                            <i class="fa-solid fa-info-circle mr-1"></i> 
+                            <a href="https://drive.google.com" target="_blank" class="text-primary-600 hover:underline font-bold">Sube tu archivo a Drive</a> y pega el enlace
                         </p>
                     </div>
 
                     <!-- Submit Button -->
                     <button type="submit" id="submit-btn" 
-                        class="w-full py-4 bg-gradient-to-r from-primary-500 to-indigo-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl btn-press transition-all flex items-center justify-center gap-2">
+                        class="w-full py-4.5 bg-gradient-to-r from-primary-500 via-indigo-600 to-purple-600 text-white rounded-2xl font-black shadow-lg hover:shadow-glow-lg btn-press transition-all flex items-center justify-center gap-3 text-base">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                         <span>Guardar en Google Sheets</span>
                     </button>
@@ -636,66 +581,77 @@
         </div>
     </div>
 
-    <!-- List View Filters Modal -->
+    <!-- Day View Modal -->
+    <div id="day-view-modal" class="modal opacity-0 pointer-events-none fixed inset-0 z-50 flex items-end lg:items-center justify-center">
+        <div class="modal-overlay absolute inset-0 bg-slate-900/70 backdrop-blur-md" onclick="closeDayView()"></div>
+        <div class="modal-content bg-white w-full lg:max-w-4xl lg:rounded-3xl shadow-2xl z-50 overflow-hidden flex flex-col lg:max-h-[90vh] h-[95vh] lg:h-auto">
+            <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-slate-50">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primary-500 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fa-regular fa-calendar-day text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-800 tracking-tight" id="day-view-title">Vista del Día</h3>
+                        <p class="text-xs text-slate-500 font-medium" id="day-view-date"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openCreateModalFromDayView()" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center text-white shadow-lg btn-press">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button onclick="closeDayView()" class="w-11 h-11 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 btn-press">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6 lg:p-8" id="day-view-content"></div>
+        </div>
+    </div>
+
+    <!-- List Filters Modal -->
     <div id="list-filters-modal" class="modal opacity-0 pointer-events-none fixed inset-0 z-50 flex items-end lg:items-center justify-center">
-        <div class="modal-overlay absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeListFilters()"></div>
-        <div class="modal-content bg-white w-full lg:max-w-lg lg:rounded-2xl shadow-2xl z-50 overflow-hidden transform translate-y-4 lg:translate-y-0">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-                <h3 class="text-lg font-bold text-slate-800">
-                    <i class="fa-solid fa-filter text-primary-600 mr-2"></i>Filtrar Lista
-                </h3>
-                <button onclick="closeListFilters()" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 btn-press">
+        <div class="modal-overlay absolute inset-0 bg-slate-900/70 backdrop-blur-md" onclick="closeListFilters()"></div>
+        <div class="modal-content bg-white w-full lg:max-w-lg lg:rounded-3xl shadow-2xl z-50 overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-slate-50">
+                <h3 class="text-xl font-black text-slate-800 tracking-tight"><i class="fa-solid fa-filter text-primary-600 mr-2.5"></i>Filtrar Lista</h3>
+                <button onclick="closeListFilters()" class="w-11 h-11 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 btn-press">
                     <i class="fa-solid fa-times"></i>
                 </button>
             </div>
-            <div class="p-5 space-y-5">
-                <!-- Month Filter -->
+            <div class="p-6 lg:p-8 space-y-6">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mes</label>
-                    <select id="filter-month" onchange="applyListFilters()" 
-                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none bg-white input-focus">
-                        <option value="all">Todos los meses</option>
-                    </select>
+                    <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">Mes</label>
+                    <select id="filter-month" onchange="applyListFilters()" class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none bg-white font-medium input-focus shadow-sm"></select>
                 </div>
-                
-                <!-- Subject Filter -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Materia</label>
-                    <select id="filter-subject" onchange="applyListFilters()" 
-                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none bg-white input-focus">
+                    <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">Materia</label>
+                    <select id="filter-subject" onchange="applyListFilters()" class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none bg-white font-medium input-focus shadow-sm">
                         <option value="all">Todas las materias</option>
                     </select>
                 </div>
-                
-                <!-- Type Filter -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Tipo</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="toggleTypeFilter('prueba')" id="filter-prueba" class="py-3 px-2 border-2 border-slate-200 rounded-xl text-xs font-bold text-slate-600 chip">
-                            <i class="fa-solid fa-pen-to-square block mb-1 text-red-500"></i>Pruebas
+                    <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">Tipo</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="toggleTypeFilter('prueba')" id="filter-prueba" class="py-4 px-3 border-2 border-slate-200 rounded-2xl text-xs font-black text-slate-600 chip selected shadow-sm">
+                            <i class="fa-solid fa-pen-to-square block mb-2 text-2xl text-red-500"></i>Pruebas
                         </button>
-                        <button onclick="toggleTypeFilter('tp')" id="filter-tp" class="py-3 px-2 border-2 border-slate-200 rounded-xl text-xs font-bold text-slate-600 chip">
-                            <i class="fa-solid fa-folder-open block mb-1 text-blue-500"></i>TPs
+                        <button onclick="toggleTypeFilter('tp')" id="filter-tp" class="py-4 px-3 border-2 border-slate-200 rounded-2xl text-xs font-black text-slate-600 chip selected shadow-sm">
+                            <i class="fa-solid fa-folder-open block mb-2 text-2xl text-blue-500"></i>TPs
                         </button>
-                        <button onclick="toggleTypeFilter('obligacion')" id="filter-obligacion" class="py-3 px-2 border-2 border-slate-200 rounded-xl text-xs font-bold text-slate-600 chip">
-                            <i class="fa-solid fa-bell block mb-1 text-amber-500"></i>Oblig.
+                        <button onclick="toggleTypeFilter('obligacion')" id="filter-obligacion" class="py-4 px-3 border-2 border-slate-200 rounded-2xl text-xs font-black text-slate-600 chip selected shadow-sm">
+                            <i class="fa-solid fa-bell block mb-2 text-2xl text-amber-500"></i>Oblig.
                         </button>
                     </div>
                 </div>
-                
-                <!-- Sort -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ordenar por</label>
-                    <select id="filter-sort" onchange="applyListFilters()" 
-                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none bg-white input-focus">
+                    <label class="block text-xs font-black text-slate-500 uppercase tracking-wider mb-3">Ordenar por</label>
+                    <select id="filter-sort" onchange="applyListFilters()" class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none bg-white font-medium input-focus shadow-sm">
                         <option value="asc">Más próximas primero</option>
                         <option value="desc">Más lejanas primero</option>
                     </select>
                 </div>
-                
-                <!-- Reset -->
-                <button onclick="resetListFilters()" class="w-full py-3 border-2 border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 btn-press">
-                    <i class="fa-solid fa-rotate-left mr-2"></i>Restablecer Filtros
+                <button onclick="resetListFilters()" class="w-full py-4 border-2 border-slate-200 text-slate-600 rounded-2xl font-black hover:bg-slate-50 btn-press transition-all">
+                    <i class="fa-solid fa-rotate-left mr-2.5"></i>Restablecer Filtros
                 </button>
             </div>
         </div>
@@ -703,32 +659,32 @@
 
     <!-- Drive Help Modal -->
     <div id="drive-help-modal" class="modal opacity-0 pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="modal-overlay absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeDriveHelp()"></div>
-        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl z-50 overflow-hidden transform scale-95">
-            <div class="p-6">
-                <div class="w-16 h-16 mx-auto mb-4 bg-red-50 rounded-2xl flex items-center justify-center">
-                    <i class="fa-brands fa-google-drive text-4xl text-red-500"></i>
+        <div class="modal-overlay absolute inset-0 bg-slate-900/70 backdrop-blur-md" onclick="closeDriveHelp()"></div>
+        <div class="modal-content bg-white w-full max-w-md rounded-3xl shadow-2xl z-50 overflow-hidden">
+            <div class="p-8">
+                <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-red-50 to-red-100 rounded-3xl flex items-center justify-center shadow-lg">
+                    <i class="fa-brands fa-google-drive text-5xl text-red-500"></i>
                 </div>
-                <h3 class="text-xl font-bold text-slate-800 text-center mb-3">Cómo adjuntar archivos</h3>
-                <ol class="space-y-3 text-sm text-slate-600">
-                    <li class="flex items-start gap-3">
-                        <span class="w-6 h-6 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
-                        <span>Sube tu archivo a <a href="https://drive.google.com" target="_blank" class="text-primary-600 hover:underline font-medium">Google Drive</a></span>
+                <h3 class="text-2xl font-black text-slate-800 text-center mb-5 tracking-tight">Cómo adjuntar archivos</h3>
+                <ol class="space-y-4 text-sm text-slate-600 font-medium">
+                    <li class="flex items-start gap-4">
+                        <span class="w-8 h-8 bg-gradient-to-br from-primary-500 to-indigo-600 text-white rounded-xl flex items-center justify-center text-sm font-black flex-shrink-0 shadow-md">1</span>
+                        <span>Sube tu archivo a <a href="https://drive.google.com" target="_blank" class="text-primary-600 hover:underline font-bold">Google Drive</a></span>
                     </li>
-                    <li class="flex items-start gap-3">
-                        <span class="w-6 h-6 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                    <li class="flex items-start gap-4">
+                        <span class="w-8 h-8 bg-gradient-to-br from-primary-500 to-indigo-600 text-white rounded-xl flex items-center justify-center text-sm font-black flex-shrink-0 shadow-md">2</span>
                         <span>Click derecho en el archivo → "Compartir"</span>
                     </li>
-                    <li class="flex items-start gap-3">
-                        <span class="w-6 h-6 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                    <li class="flex items-start gap-4">
+                        <span class="w-8 h-8 bg-gradient-to-br from-primary-500 to-indigo-600 text-white rounded-xl flex items-center justify-center text-sm font-black flex-shrink-0 shadow-md">3</span>
                         <span>Cambia a "Cualquier persona con el enlace"</span>
                     </li>
-                    <li class="flex items-start gap-3">
-                        <span class="w-6 h-6 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                    <li class="flex items-start gap-4">
+                        <span class="w-8 h-8 bg-gradient-to-br from-primary-500 to-indigo-600 text-white rounded-xl flex items-center justify-center text-sm font-black flex-shrink-0 shadow-md">4</span>
                         <span>Copia el enlace y pégalo arriba</span>
                     </li>
                 </ol>
-                <button onclick="closeDriveHelp()" class="w-full mt-6 py-3 bg-gradient-to-r from-primary-500 to-indigo-600 text-white rounded-xl font-bold btn-press">
+                <button onclick="closeDriveHelp()" class="w-full mt-8 py-4 bg-gradient-to-r from-primary-500 via-indigo-600 to-purple-600 text-white rounded-2xl font-black shadow-lg hover:shadow-glow btn-press transition-all">
                     ¡Entendido!
                 </button>
             </div>
@@ -742,7 +698,7 @@
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4shbJRTlAkUYjr3gMd2HBFP4Ox8PlRNexE-E3HeHmhXhpQkYGsFS2gbNaxl0ZWGU/exec';
         
         // ============================================
-        // DATA
+        // DATA - Subjects (COMEDOR excluded from dropdown but shown in calendar)
         // ============================================
         const subjectsConfig = {
             'MATEMATICA': { color: 'bg-math', icon: 'fa-calculator', label: 'Matemática' },
@@ -758,10 +714,16 @@
             'TECNOLOGIA': { color: 'bg-tecno', icon: 'fa-microchip', label: 'Tecnología' },
             'TEATRO': { color: 'bg-teatro', icon: 'fa-masks-theater', label: 'Teatro' },
             'ED FÍSICA': { color: 'bg-teatro', icon: 'fa-person-running', label: 'Ed. Física' },
-            'TUTORIA': { color: 'bg-construccion', icon: 'fa-user-group', label: 'Tutoría' },
-            'COMEDOR': { color: 'bg-construccion', icon: 'fa-utensils', label: 'Comedor' }
+            'TUTORIA': { color: 'bg-construccion', icon: 'fa-user-group', label: 'Tutoría' }
         };
 
+        // All subjects including COMEDOR for calendar display
+        const allSubjectsIncludingComedor = {
+            ...subjectsConfig,
+            'COMEDOR': { color: 'bg-comedor', icon: 'fa-utensils', label: 'Comedor' }
+        };
+
+        // Timetable: 0=Mon, 4=Fri. Slots match timeLabels.
         const timetable = [
             ['GEOGRAFÍA', 'BIOLOGÍA', 'CONSTRUCCIÓN', 'HISTORIA', '', 'ED FÍSICA', '', '', '', '', ''],
             ['MATEMATICA', 'GEOGRAFÍA', 'FOR DOC', 'PDL', 'BIOLOGÍA', 'FISÍCO QUÍMICA', '', '', '', '', ''],
@@ -777,12 +739,8 @@
         let events = [];
         let activeFilter = null;
         let isLoading = false;
-        let listFilters = {
-            month: 'all',
-            subject: 'all',
-            types: ['prueba', 'tp', 'obligacion'],
-            sort: 'asc'
-        };
+        let selectedDayForModal = null;
+        let listFilters = { month: 'all', subject: 'all', types: ['prueba', 'tp', 'obligacion'], sort: 'asc' };
 
         // ============================================
         // INITIALIZATION
@@ -798,7 +756,6 @@
             await loadDataFromGoogleSheets();
             updateStats();
             
-            // Hide loading screen
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.add('opacity-0');
                 setTimeout(() => {
@@ -811,29 +768,21 @@
         // ============================================
         // GOOGLE SHEETS API
         // ============================================
-        
         async function loadDataFromGoogleSheets() {
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'GET',
-                    mode: 'no-cors'
-                });
-                
+                await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'no-cors' });
                 const localData = localStorage.getItem('agenda3roa_events');
                 if (localData) {
                     events = JSON.parse(localData);
                     showToast('Datos sincronizados', 'success');
                 } else {
-                    showToast('Bienvenido a tu agenda', 'success');
+                    showToast('¡Bienvenido a tu agenda!', 'success');
                 }
-                
                 updateSyncStatus(true);
             } catch (error) {
                 console.error('Error loading data:', error);
                 const localData = localStorage.getItem('agenda3roa_events');
-                if (localData) {
-                    events = JSON.parse(localData);
-                }
+                if (localData) events = JSON.parse(localData);
                 updateSyncStatus(false);
                 showToast('Modo offline activado', 'warning');
             } finally {
@@ -852,13 +801,9 @@
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: action,
-                        ...eventData
-                    })
+                    body: JSON.stringify({ action: action, ...eventData })
                 });
                 
-                // Update local storage
                 if (action === 'create') {
                     events.push(eventData);
                 } else if (action === 'update') {
@@ -869,12 +814,10 @@
                 }
                 
                 localStorage.setItem('agenda3roa_events', JSON.stringify(events));
-                
                 showToast(action === 'delete' ? 'Actividad eliminada' : '¡Guardado exitosamente!', 'success');
                 closeModal();
                 renderCalendar();
                 updateStats();
-                
             } catch (error) {
                 console.error('Error saving:', error);
                 showToast('Error al guardar. Verifica tu conexión.', 'error');
@@ -885,9 +828,6 @@
         }
 
         async function syncData() {
-            const originalText = document.getElementById('sync-status-desktop').innerHTML;
-            document.getElementById('sync-status-desktop').innerHTML = '<i class="fa-solid fa-circle-notch spinner"></i><span class="text-slate-500">Sincronizando...</span>';
-            
             try {
                 await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'no-cors' });
                 showToast('Sincronización completada', 'success');
@@ -902,12 +842,10 @@
         }
 
         function updateSyncStatus(online) {
-            const statusDesktop = document.getElementById('sync-status-desktop');
-            if (online) {
-                statusDesktop.innerHTML = '<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span><span class="text-green-600 font-medium">En línea</span>';
-            } else {
-                statusDesktop.innerHTML = '<span class="w-2 h-2 bg-amber-500 rounded-full"></span><span class="text-amber-600 font-medium">Offline</span>';
-            }
+            const status = document.getElementById('sync-status-desktop');
+            status.innerHTML = online 
+                ? '<span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></span><span class="text-green-600 font-bold">En línea</span>'
+                : '<span class="w-2.5 h-2.5 bg-amber-500 rounded-full"></span><span class="text-amber-600 font-bold">Offline</span>';
         }
 
         function exportData() {
@@ -928,7 +866,6 @@
                 const eDate = new Date(e.fecha || e.date);
                 return eDate.getMonth() === now.getMonth() && eDate.getFullYear() === now.getFullYear();
             });
-            
             document.getElementById('stat-pruebas').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'prueba').length;
             document.getElementById('stat-tps').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'tp').length;
             document.getElementById('stat-obligaciones').textContent = thisMonth.filter(e => (e.tipo || e.type) === 'obligacion').length;
@@ -937,38 +874,22 @@
         // ============================================
         // VIEW FUNCTIONS
         // ============================================
-        
         function switchView(view) {
             currentView = view;
-            
-            // Update buttons (mobile)
-            ['month', 'week', 'list'].forEach(v => {
-                const btn = document.getElementById(`btn-${v}`);
-                if(btn) {
-                    if(v === view) {
-                        btn.classList.add('bg-primary-50', 'text-primary-600');
-                        btn.classList.remove('text-slate-500');
-                    } else {
-                        btn.classList.remove('bg-primary-50', 'text-primary-600');
-                        btn.classList.add('text-slate-500');
+            ['month', 'week', 'day', 'list'].forEach(v => {
+                ['btn-' + v, 'btn-' + v + '-desktop'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if(btn) {
+                        if(v === view) {
+                            btn.classList.add('bg-gradient-to-br', 'from-primary-500', 'to-indigo-600', 'text-white', 'shadow-md');
+                            btn.classList.remove('text-slate-500');
+                        } else {
+                            btn.classList.remove('bg-gradient-to-br', 'from-primary-500', 'to-indigo-600', 'text-white', 'shadow-md');
+                            btn.classList.add('text-slate-500');
+                        }
                     }
-                }
+                });
             });
-            
-            // Update buttons (desktop)
-            ['month', 'week', 'list'].forEach(v => {
-                const btn = document.getElementById(`btn-${v}-desktop`);
-                if(btn) {
-                    if(v === view) {
-                        btn.classList.add('bg-white', 'shadow', 'text-primary-600');
-                        btn.classList.remove('text-slate-500');
-                    } else {
-                        btn.classList.remove('bg-white', 'shadow', 'text-primary-600');
-                        btn.classList.add('text-slate-500');
-                    }
-                }
-            });
-            
             renderCalendar();
         }
 
@@ -977,6 +898,8 @@
                 currentDate.setMonth(currentDate.getMonth() + direction);
             } else if (currentView === 'week') {
                 currentDate.setDate(currentDate.getDate() + (direction * 7));
+            } else if (currentView === 'day') {
+                currentDate.setDate(currentDate.getDate() + direction);
             }
             renderCalendar();
         }
@@ -990,7 +913,6 @@
         // ============================================
         // FILTER FUNCTIONS
         // ============================================
-        
         function renderSubjectFilters() {
             const mobileContainer = document.getElementById('subject-filters-mobile');
             const desktopContainer = document.getElementById('subject-filters-desktop');
@@ -1000,34 +922,25 @@
                 const config = subjectsConfig[sub];
                 const colorClass = config.color.split(' ')[0];
                 const isActive = activeFilter === sub;
-                const activeClass = isActive ? 'ring-2 ring-primary-500 bg-slate-100 shadow-sm' : 'bg-white border-slate-200 shadow-sm';
-                
-                return `
-                    <button onclick="toggleSubjectFilter('${sub}')" class="flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full text-xs font-bold border transition-all chip ${activeClass}">
-                        <div class="w-2.5 h-2.5 rounded-full ${colorClass.replace('bg-', 'bg-')}"></div>
-                        <span class="${isActive ? 'text-primary-700' : 'text-slate-600'}">${config.label}</span>
-                    </button>
-                `;
+                const activeClass = isActive ? 'ring-2 ring-primary-500 bg-slate-100 shadow-md' : 'bg-white border-slate-200 shadow-sm';
+                return `<button onclick="toggleSubjectFilter('${sub}')" class="flex-shrink-0 flex items-center gap-2.5 px-4 py-2.5 rounded-full text-xs font-black border-2 transition-all chip ${activeClass}">
+                    <div class="w-3 h-3 rounded-full ${colorClass.replace('bg-', 'bg-')} shadow-sm"></div>
+                    <span class="${isActive ? 'text-primary-700' : 'text-slate-600'}">${config.label}</span>
+                </button>`;
             }).join('');
 
             if(mobileContainer) mobileContainer.innerHTML = html;
             if(desktopContainer) {
-                desktopContainer.innerHTML = `
-                    <div class="space-y-1.5">
-                        ${uniqueSubjects.map(sub => {
-                            const config = subjectsConfig[sub];
-                            const colorClass = config.color.split(' ')[0];
-                            const isActive = activeFilter === sub;
-                            return `
-                                <button onclick="toggleSubjectFilter('${sub}')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive ? 'bg-primary-50 border-2 border-primary-200' : 'hover:bg-slate-50 border-2 border-transparent'}">
-                                    <div class="w-3 h-3 rounded-full ${colorClass.replace('bg-', 'bg-')}"></div>
-                                    <span class="text-sm font-medium ${isActive ? 'text-primary-700' : 'text-slate-600'}">${config.label}</span>
-                                    ${isActive ? '<i class="fa-solid fa-check text-primary-600 ml-auto"></i>' : ''}
-                                </button>
-                            `;
-                        }).join('')}
-                    </div>
-                `;
+                desktopContainer.innerHTML = '<div class="space-y-2">' + uniqueSubjects.map(sub => {
+                    const config = subjectsConfig[sub];
+                    const colorClass = config.color.split(' ')[0];
+                    const isActive = activeFilter === sub;
+                    return `<button onclick="toggleSubjectFilter('${sub}')" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${isActive ? 'bg-gradient-to-br from-primary-50 to-indigo-50 border-2 border-primary-300 shadow-md' : 'hover:bg-slate-50 border-2 border-transparent'}">
+                        <div class="w-3.5 h-3.5 rounded-full ${colorClass.replace('bg-', 'bg-')} shadow-sm"></div>
+                        <span class="text-sm font-bold ${isActive ? 'text-primary-700' : 'text-slate-600'}">${config.label}</span>
+                        ${isActive ? '<i class="fa-solid fa-check text-primary-600 ml-auto"></i>' : ''}
+                    </button>`;
+                }).join('') + '</div>';
             }
         }
 
@@ -1052,11 +965,9 @@
         }
 
         function populateFilterDropdowns() {
-            // Month filter
             const monthSelect = document.getElementById('filter-month');
             const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
             const now = new Date();
-            
             for (let i = -1; i < 12; i++) {
                 const date = new Date(now.getFullYear(), now.getMonth() + i, 1);
                 const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -1064,44 +975,121 @@
                 monthSelect.innerHTML += `<option value="${value}">${label}</option>`;
             }
             
-            // Subject filter
             const subjectSelect = document.getElementById('filter-subject');
             const uniqueSubjects = [...new Set(Object.keys(subjectsConfig))].sort();
-            subjectSelect.innerHTML = '<option value="all">Todas las materias</option>' + 
-                uniqueSubjects.map(sub => `<option value="${sub}">${subjectsConfig[sub].label}</option>`).join('');
+            subjectSelect.innerHTML += uniqueSubjects.map(sub => `<option value="${sub}">${subjectsConfig[sub].label}</option>`).join('');
+        }
+
+        // ============================================
+        // DATE & TIME SLOT FUNCTIONS
+        // ============================================
+        function onDateChange() {
+            const dateInput = document.getElementById('event-date-input').value;
+            if (!dateInput) return;
+            
+            const selectedDate = new Date(dateInput);
+            const dayOfWeek = selectedDate.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+            
+            // Show schedule preview
+            const preview = document.getElementById('day-schedule-preview');
+            const slotsContainer = document.getElementById('schedule-slots');
+            
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                // Weekend - no classes
+                preview.classList.remove('hidden');
+                slotsContainer.innerHTML = `
+                    <div class="col-span-full p-4 bg-slate-100 rounded-xl text-center">
+                        <i class="fa-solid fa-calendar-xmark text-3xl text-slate-400 mb-2"></i>
+                        <p class="text-sm font-bold text-slate-500">No hay clases los fines de semana</p>
+                    </div>
+                `;
+                document.getElementById('event-time').innerHTML = '<option value="">Sin horarios disponibles</option>';
+                return;
+            }
+            
+            const timetableIndex = dayOfWeek - 1; // 0=Mon, 4=Fri
+            const daySchedule = timetable[timetableIndex];
+            
+            preview.classList.remove('hidden');
+            let slotsHtml = '';
+            let timeOptions = '<option value="">Seleccionar horario...</option>';
+            
+            daySchedule.forEach((subject, slotIndex) => {
+                if (subject && allSubjectsIncludingComedor[subject]) {
+                    const config = allSubjectsIncludingComedor[subject];
+                    const timeLabel = timeLabels[slotIndex];
+                    slotsHtml += `
+                        <button type="button" onclick="selectTimeSlot('${timetableIndex}-${slotIndex}', '${subject}')" 
+                            class="time-slot p-3 border-2 border-slate-200 rounded-xl text-left hover:border-primary-300 transition-all shadow-sm">
+                            <div class="text-[10px] font-bold text-slate-400 mb-1">${timeLabel}</div>
+                            <div class="text-xs font-bold ${config.color.split(' ')[1]}">${subject}</div>
+                        </button>
+                    `;
+                    timeOptions += `<option value="${timetableIndex}-${slotIndex}">${subject} - ${timeLabel}</option>`;
+                }
+            });
+            
+            slotsContainer.innerHTML = slotsHtml;
+            document.getElementById('event-time').innerHTML = timeOptions;
+        }
+
+        function selectTimeSlot(slotValue, subject) {
+            // Update time select
+            document.getElementById('event-time').value = slotValue;
+            
+            // Update subject select if not already set
+            const subjectSelect = document.getElementById('event-subject');
+            if (!subjectSelect.value || subjectSelect.value !== subject) {
+                // Check if subject is in the dropdown (not COMEDOR)
+                if (subjectsConfig[subject]) {
+                    subjectSelect.value = subject;
+                    updateTimeSlots();
+                }
+            }
+            
+            // Visual feedback
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            event.target.closest('.time-slot').classList.add('selected');
         }
 
         function updateTimeSlots() {
             const subject = document.getElementById('event-subject').value;
+            const dateInput = document.getElementById('event-date-input').value;
             const timeSelect = document.getElementById('event-time');
-            timeSelect.innerHTML = '<option value="">Seleccionar horario...</option>';
-
-            if (!subject) return;
-
-            const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
-            let options = [];
-
-            timetable.forEach((daySlots, dayIndex) => {
-                daySlots.forEach((slotSubject, slotIndex) => {
-                    if (slotSubject === subject) {
-                        options.push({
-                            label: `${dayNames[dayIndex]} - ${timeLabels[slotIndex]}`,
-                            value: `${dayIndex}-${slotIndex}`
-                        });
-                    }
-                });
-            });
-
-            if(options.length === 0) {
-                timeSelect.innerHTML = '<option disabled>Sin horarios disponibles</option>';
-            } else {
-                options.forEach(opt => {
-                    const el = document.createElement('option');
-                    el.value = opt.value;
-                    el.textContent = opt.label;
-                    timeSelect.appendChild(el);
-                });
+            
+            if (!subject || !dateInput) {
+                timeSelect.innerHTML = '<option value="">Primero selecciona fecha y materia</option>';
+                return;
             }
+            
+            const selectedDate = new Date(dateInput);
+            const dayOfWeek = selectedDate.getDay();
+            
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                timeSelect.innerHTML = '<option value="">Sin horarios (fin de semana)</option>';
+                return;
+            }
+            
+            const timetableIndex = dayOfWeek - 1;
+            const daySchedule = timetable[timetableIndex];
+            
+            let options = '<option value="">Seleccionar horario...</option>';
+            let foundSubject = false;
+            
+            daySchedule.forEach((slotSubject, slotIndex) => {
+                if (slotSubject === subject) {
+                    options += `<option value="${timetableIndex}-${slotIndex}">${timeLabels[slotIndex]}</option>`;
+                    foundSubject = true;
+                }
+            });
+            
+            if (!foundSubject) {
+                options = '<option value="">Esta materia no tiene clase este día</option>';
+            }
+            
+            timeSelect.innerHTML = options;
         }
 
         function toggleModality(show) {
@@ -1109,87 +1097,62 @@
         }
 
         // ============================================
-        // LIST FILTERS
-        // ============================================
-        
-        function openListFilters() {
-            const modal = document.getElementById('list-filters-modal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.classList.add('modal-active');
-            document.body.classList.add('modal-active');
-        }
-
-        function closeListFilters() {
-            const modal = document.getElementById('list-filters-modal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.classList.remove('modal-active');
-            document.body.classList.remove('modal-active');
-        }
-
-        function toggleTypeFilter(type) {
-            const btn = document.getElementById(`filter-${type}`);
-            const index = listFilters.types.indexOf(type);
-            
-            if (index > -1) {
-                if (listFilters.types.length > 1) {
-                    listFilters.types.splice(index, 1);
-                    btn.classList.remove('selected');
-                }
-            } else {
-                listFilters.types.push(type);
-                btn.classList.add('selected');
-            }
-            
-            applyListFilters();
-        }
-
-        function applyListFilters() {
-            listFilters.month = document.getElementById('filter-month').value;
-            listFilters.subject = document.getElementById('filter-subject').value;
-            listFilters.sort = document.getElementById('filter-sort').value;
-            renderListView();
-        }
-
-        function resetListFilters() {
-            listFilters = {
-                month: 'all',
-                subject: 'all',
-                types: ['prueba', 'tp', 'obligacion'],
-                sort: 'asc'
-            };
-            
-            document.getElementById('filter-month').value = 'all';
-            document.getElementById('filter-subject').value = 'all';
-            document.getElementById('filter-sort').value = 'asc';
-            
-            ['prueba', 'tp', 'obligacion'].forEach(type => {
-                document.getElementById(`filter-${type}`).classList.add('selected');
-            });
-            
-            applyListFilters();
-            showToast('Filtros restablecidos', 'success');
-        }
-
-        // ============================================
         // MODAL FUNCTIONS
         // ============================================
-        
-        function openCreateModal(dateStr = null) {
+        function openCreateModal(dateStr = null, eventId = null) {
             const modal = document.getElementById('event-modal');
             const form = document.getElementById('event-form');
             
             form.reset();
             document.getElementById('modality-group').style.display = 'block';
             document.getElementById('file-preview').classList.add('hidden');
-            document.getElementById('event-id').value = '';
-            document.getElementById('event-time').innerHTML = '<option value="">Primero selecciona materia</option>';
+            document.getElementById('day-schedule-preview').classList.add('hidden');
             
-            // Set date (default to today or provided date)
-            const targetDate = dateStr || new Date().toISOString().split('T')[0];
-            document.getElementById('event-date-input').value = targetDate;
-            document.getElementById('event-date').value = targetDate;
-            
-            document.getElementById('modal-title').textContent = 'Nueva Actividad';
+            // Edit mode
+            if (eventId) {
+                const event = events.find(e => e.id === eventId);
+                if (event) {
+                    document.getElementById('modal-title').textContent = 'Editar Actividad';
+                    document.getElementById('modal-subtitle').textContent = 'Modifica los detalles';
+                    document.getElementById('event-id').value = event.id;
+                    document.getElementById('event-date-input').value = event.fecha || event.date;
+                    document.getElementById('event-subject').value = event.materia || event.subject;
+                    document.getElementById('event-time').value = event.horario || event.timeSlot;
+                    document.getElementById('event-title').value = event.titulo || event.title;
+                    document.getElementById('event-topics').value = event.temas || event.topics;
+                    document.getElementById('event-file-url').value = event.archivo || '';
+                    
+                    if (event.modalidad) {
+                        const modalityRadio = document.querySelector(`input[name="modality"][value="${event.modalidad}"]`);
+                        if (modalityRadio) modalityRadio.checked = true;
+                    }
+                    
+                    const typeRadio = document.querySelector(`input[name="type"][value="${event.tipo || event.type}"]`);
+                    if (typeRadio) {
+                        typeRadio.checked = true;
+                        toggleModality((event.tipo || event.type) === 'prueba');
+                    }
+                    
+                    if (event.archivo) {
+                        document.getElementById('file-preview-text').textContent = 'Archivo adjunto';
+                        document.getElementById('file-preview').classList.remove('hidden');
+                    }
+                    
+                    // Trigger date change to show schedule
+                    onDateChange();
+                }
+            } else {
+                // Create mode
+                document.getElementById('modal-title').textContent = 'Nueva Actividad';
+                document.getElementById('modal-subtitle').textContent = 'Completa los detalles';
+                document.getElementById('event-id').value = '';
+                
+                const targetDate = dateStr || new Date().toISOString().split('T')[0];
+                document.getElementById('event-date-input').value = targetDate;
+                
+                // Trigger date change to show schedule
+                onDateChange();
+            }
             
             modal.classList.remove('opacity-0', 'pointer-events-none');
             setTimeout(() => {
@@ -1198,13 +1161,58 @@
             document.body.classList.add('modal-active');
         }
 
+        function openCreateModalFromDayView() {
+            const dateStr = selectedDayForModal || new Date().toISOString().split('T')[0];
+            openCreateModal(dateStr);
+        }
+
         function closeModal() {
             const modal = document.getElementById('event-modal');
             modal.classList.remove('modal-active');
             modal.classList.add('opacity-0', 'pointer-events-none');
             setTimeout(() => {
                 document.body.classList.remove('modal-active');
-            }, 300);
+            }, 400);
+        }
+
+        function openDayView(dateStr) {
+            selectedDayForModal = dateStr;
+            const modal = document.getElementById('day-view-modal');
+            const date = new Date(dateStr);
+            
+            document.getElementById('day-view-title').textContent = date.toLocaleDateString('es-ES', { weekday: 'long' });
+            document.getElementById('day-view-date').textContent = date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            renderDayViewContent(date);
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                modal.classList.add('modal-active');
+            }, 10);
+        }
+
+        function closeDayView() {
+            const modal = document.getElementById('day-view-modal');
+            modal.classList.remove('modal-active');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function openListFilters() {
+            const modal = document.getElementById('list-filters-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                modal.classList.add('modal-active');
+            }, 10);
+            document.body.classList.add('modal-active');
+        }
+
+        function closeListFilters() {
+            const modal = document.getElementById('list-filters-modal');
+            modal.classList.remove('modal-active');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                document.body.classList.remove('modal-active');
+            }, 400);
         }
 
         function openDriveHelp() {
@@ -1234,11 +1242,11 @@
             if (this.value.trim()) {
                 if (this.value.includes('drive.google.com')) {
                     previewText.textContent = 'Enlace de Drive válido ✓';
-                    preview.querySelector('i').className = 'fa-solid fa-circle-check text-green-600';
+                    preview.querySelector('i').className = 'fa-solid fa-circle-check text-green-600 text-lg';
                     preview.classList.remove('hidden');
                 } else {
                     previewText.textContent = 'El enlace debe ser de Google Drive';
-                    preview.querySelector('i').className = 'fa-solid fa-circle-exclamation text-amber-600';
+                    preview.querySelector('i').className = 'fa-solid fa-circle-exclamation text-amber-600 text-lg';
                     preview.classList.remove('hidden');
                 }
             } else {
@@ -1246,21 +1254,56 @@
             }
         });
 
-        // Update hidden date when visible date changes
-        document.getElementById('event-date-input')?.addEventListener('change', function() {
-            document.getElementById('event-date').value = this.value;
-        });
+        // ============================================
+        // LIST FILTERS
+        // ============================================
+        function toggleTypeFilter(type) {
+            const btn = document.getElementById(`filter-${type}`);
+            const index = listFilters.types.indexOf(type);
+            
+            if (index > -1) {
+                if (listFilters.types.length > 1) {
+                    listFilters.types.splice(index, 1);
+                    btn.classList.remove('selected');
+                }
+            } else {
+                listFilters.types.push(type);
+                btn.classList.add('selected');
+            }
+            
+            applyListFilters();
+        }
+
+        function applyListFilters() {
+            listFilters.month = document.getElementById('filter-month').value;
+            listFilters.subject = document.getElementById('filter-subject').value;
+            listFilters.sort = document.getElementById('filter-sort').value;
+            renderListView();
+        }
+
+        function resetListFilters() {
+            listFilters = { month: 'all', subject: 'all', types: ['prueba', 'tp', 'obligacion'], sort: 'asc' };
+            
+            document.getElementById('filter-month').value = 'all';
+            document.getElementById('filter-subject').value = 'all';
+            document.getElementById('filter-sort').value = 'asc';
+            
+            ['prueba', 'tp', 'obligacion'].forEach(type => {
+                document.getElementById(`filter-${type}`).classList.add('selected');
+            });
+            
+            applyListFilters();
+            showToast('Filtros restablecidos', 'success');
+        }
 
         // ============================================
         // FORM SUBMISSION
         // ============================================
-        
         function handleFormSubmit(e) {
             e.preventDefault();
             
             const fileUrl = document.getElementById('event-file-url').value;
             
-            // Validate Drive URL
             if (fileUrl && !fileUrl.includes('drive.google.com')) {
                 showToast('El enlace debe ser de Google Drive', 'error');
                 return;
@@ -1292,7 +1335,6 @@
         // ============================================
         // CALENDAR RENDERING
         // ============================================
-        
         function renderCalendar() {
             const container = document.getElementById('calendar-content');
             const dateDisplayMobile = document.getElementById('current-date-display-mobile');
@@ -1306,6 +1348,7 @@
 
             if (currentView === 'month') renderMonthView(container);
             else if (currentView === 'week') renderWeekView(container);
+            else if (currentView === 'day') renderDayViewFull(container);
             else if (currentView === 'list') {
                 openListFilters();
                 renderListView();
@@ -1329,9 +1372,9 @@
             const startOffset = firstDay === 0 ? 6 : firstDay - 1;
 
             let html = `
-                <div class="grid grid-cols-7 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+                <div class="grid grid-cols-7 border-b-2 border-slate-200 bg-gradient-to-r from-slate-50 via-white to-slate-50">
                     ${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(d => 
-                        `<div class="py-3 text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider">${d}</div>`
+                        `<div class="py-4 text-center text-[11px] font-black text-slate-500 uppercase tracking-wider">${d}</div>`
                     ).join('')}
                 </div>
                 <div class="grid grid-cols-7 auto-rows-fr bg-slate-200 gap-px">
@@ -1348,12 +1391,12 @@
                 const isWeekend = currentDayDate.getDay() === 0 || currentDayDate.getDay() === 6;
                 
                 html += `
-                    <div class="bg-white calendar-cell p-2 relative group hover:bg-slate-50 transition-colors cursor-pointer" onclick="openCreateModal('${currentDayDate.toISOString().split('T')[0]}')">
+                    <div class="bg-white calendar-cell p-2.5 relative group hover:bg-gradient-to-br hover:from-primary-50 hover:to-indigo-50 transition-all cursor-pointer" onclick="openDayView('${currentDayDate.toISOString().split('T')[0]}')">
                         <div class="flex justify-between items-start mb-2">
-                            <span class="text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full ${isToday ? 'bg-gradient-to-br from-primary-500 to-indigo-600 text-white shadow-lg' : (isWeekend ? 'text-red-500' : 'text-slate-700')}">${d}</span>
-                            ${dayEvents.length > 0 ? `<span class="text-[10px] font-bold text-slate-400">${dayEvents.length}</span>` : ''}
+                            <span class="text-sm font-black w-8 h-8 flex items-center justify-center rounded-full ${isToday ? 'bg-gradient-to-br from-primary-500 via-indigo-600 to-purple-600 text-white shadow-lg shadow-primary-500/50' : (isWeekend ? 'text-red-500 bg-red-50' : 'text-slate-700 bg-slate-100')}">${d}</span>
+                            ${dayEvents.length > 0 ? `<span class="text-[10px] font-black text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">${dayEvents.length}</span>` : ''}
                         </div>
-                        <div class="space-y-1 overflow-y-auto max-h-[60px] hide-scrollbar">
+                        <div class="space-y-1 overflow-y-auto max-h-[65px] hide-scrollbar">
                             ${dayEvents.slice(0, 3).map(e => {
                                 let badgeClass = 'bg-slate-100 text-slate-600';
                                 const tipo = e.tipo || e.type;
@@ -1363,14 +1406,14 @@
                                 
                                 const titulo = e.titulo || e.title;
                                 return `
-                                    <div class="text-[9px] px-1.5 py-1 rounded-md ${badgeClass} truncate font-semibold shadow-sm">
+                                    <div class="text-[9px] px-2 py-1.5 rounded-lg ${badgeClass} truncate font-bold shadow-sm">
                                         ${titulo}
                                     </div>
                                 `;
                             }).join('')}
-                            ${dayEvents.length > 3 ? `<div class="text-[9px] text-slate-400 text-center font-medium">+${dayEvents.length - 3} más</div>` : ''}
+                            ${dayEvents.length > 3 ? `<div class="text-[9px] text-slate-400 text-center font-bold">+${dayEvents.length - 3} más</div>` : ''}
                         </div>
-                        <button class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 text-primary-600 hover:text-primary-700 transition-opacity btn-press">
+                        <button class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 text-primary-600 hover:text-primary-700 transition-all btn-press">
                             <i class="fa-solid fa-circle-plus text-lg"></i>
                         </button>
                     </div>
@@ -1394,15 +1437,15 @@
 
             let html = `
                 <div class="overflow-x-auto">
-                    <div class="min-w-[700px]">
-                        <div class="grid grid-cols-8 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white sticky top-0 z-10">
-                            <div class="p-3 text-[10px] font-bold text-slate-500 border-r border-slate-200">Hora</div>
+                    <div class="min-w-[800px]">
+                        <div class="grid grid-cols-8 border-b-2 border-slate-200 bg-gradient-to-r from-slate-50 via-white to-slate-50 sticky top-0 z-10">
+                            <div class="p-4 text-[10px] font-black text-slate-500 border-r border-slate-200">Hora</div>
                             ${weekDays.map(d => {
                                 const isToday = new Date().toDateString() === d.toDateString();
                                 return `
-                                    <div class="p-3 text-center border-r border-slate-200 ${isToday ? 'bg-primary-50' : ''}">
-                                        <div class="text-[10px] font-bold text-slate-500 uppercase">${d.toLocaleDateString('es-ES', { weekday: 'short' })}</div>
-                                        <div class="text-lg font-bold ${isToday ? 'text-primary-600' : 'text-slate-800'}">${d.getDate()}</div>
+                                    <div class="p-4 text-center border-r border-slate-200 ${isToday ? 'bg-gradient-to-br from-primary-50 to-indigo-50' : ''}">
+                                        <div class="text-[10px] font-black text-slate-500 uppercase">${d.toLocaleDateString('es-ES', { weekday: 'short' })}</div>
+                                        <div class="text-xl font-black ${isToday ? 'text-primary-600' : 'text-slate-800'}">${d.getDate()}</div>
                                     </div>
                                 `;
                             }).join('')}
@@ -1414,9 +1457,9 @@
 
             slotsToRender.forEach(slotIdx => {
                 html += `
-                    <div class="grid grid-cols-8 border-b border-slate-100 min-h-[55px]">
-                        <div class="p-2 text-[10px] text-slate-400 border-r border-slate-200 bg-slate-50 flex flex-col justify-center items-center">
-                            <span class="font-mono font-medium">${timeLabels[slotIdx]}</span>
+                    <div class="grid grid-cols-8 border-b border-slate-100 min-h-[60px]">
+                        <div class="p-3 text-[10px] text-slate-400 border-r border-slate-200 bg-slate-50 flex flex-col justify-center items-center">
+                            <span class="font-mono font-bold">${timeLabels[slotIdx]}</span>
                         </div>
                         ${weekDays.map((dayDate, dayIdx) => {
                             if(dayIdx > 4) return `<div class="border-r border-slate-100 bg-slate-50/50"></div>`;
@@ -1433,10 +1476,10 @@
 
                             let cellContent = '';
                             if(subject) {
-                                const config = subjectsConfig[subject];
+                                const config = allSubjectsIncludingComedor[subject];
                                 cellContent = `
-                                    <div class="h-full w-full flex flex-col items-center justify-center p-1 text-center opacity-50">
-                                        <i class="fa-solid ${config.icon} ${config.color.split(' ')[1]} text-sm mb-0.5"></i>
+                                    <div class="h-full w-full flex flex-col items-center justify-center p-1 text-center opacity-60">
+                                        <i class="fa-solid ${config.icon} ${config.color.split(' ')[1]} text-base mb-1"></i>
                                         <span class="text-[9px] font-bold ${config.color.split(' ')[1]}">${subject}</span>
                                     </div>
                                 `;
@@ -1444,11 +1487,11 @@
 
                             let eventBadges = '';
                             if(dayEvents.length > 0) {
-                                eventBadges = `<div class="absolute inset-0 flex flex-col justify-center items-center gap-1 p-1 z-10">
+                                eventBadges = `<div class="absolute inset-0 flex flex-col justify-center items-center gap-1.5 p-1 z-10">
                                     ${dayEvents.map(e => {
                                         let color = (e.tipo || e.type) === 'prueba' ? 'bg-red-500' : ((e.tipo || e.type) === 'tp' ? 'bg-blue-500' : 'bg-amber-500');
                                         const titulo = e.titulo || e.title;
-                                        return `<div class="${color} text-white text-[9px] px-2 py-1 rounded-md shadow-md whitespace-nowrap max-w-full truncate font-medium">
+                                        return `<div class="${color} text-white text-[9px] px-2.5 py-1.5 rounded-xl shadow-lg whitespace-nowrap max-w-full truncate font-bold">
                                             ${titulo}
                                         </div>`
                                     }).join('')}
@@ -1456,7 +1499,7 @@
                             }
 
                             return `
-                                <div class="border-r border-slate-100 relative hover:bg-slate-50 transition-colors cursor-pointer" onclick="openCreateModal('${dayDate.toISOString().split('T')[0]}', ${dayIdx}, ${slotIdx})">
+                                <div class="border-r border-slate-100 relative hover:bg-gradient-to-br hover:from-primary-50 hover:to-indigo-50 transition-all cursor-pointer" onclick="openDayView('${dayDate.toISOString().split('T')[0]}')">
                                     ${cellContent}
                                     ${eventBadges}
                                 </div>
@@ -1470,12 +1513,112 @@
             container.innerHTML = html;
         }
 
+        function renderDayViewFull(container) {
+            const dateStr = currentDate.toISOString().split('T')[0];
+            openDayView(dateStr);
+            container.innerHTML = `
+                <div class="p-8 text-center">
+                    <i class="fa-regular fa-calendar-day text-6xl text-slate-300 mb-4"></i>
+                    <p class="text-slate-500 font-medium">La vista del día se abre en una ventana modal</p>
+                    <button onclick="openDayView('${dateStr}')" class="mt-4 px-6 py-3 bg-gradient-to-r from-primary-500 to-indigo-600 text-white rounded-xl font-bold btn-press">
+                        Ver día
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderDayViewContent(date) {
+            const container = document.getElementById('day-view-content');
+            const dayOfWeek = date.getDay();
+            
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="w-20 h-20 mx-auto mb-6 bg-slate-100 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-calendar-xmark text-4xl text-slate-400"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-slate-800 mb-2">Fin de Semana</h3>
+                        <p class="text-slate-500 font-medium">No hay clases programadas</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const timetableIndex = dayOfWeek - 1;
+            const daySchedule = timetable[timetableIndex];
+            const dayEvents = getEventsForDate(date);
+            
+            let html = '<div class="space-y-4">';
+            
+            daySchedule.forEach((subject, slotIndex) => {
+                if (!subject) return;
+                
+                const config = allSubjectsIncludingComedor[subject];
+                const slotEvents = dayEvents.filter(e => {
+                    if(e.horario || e.timeSlot) {
+                        const [eDay, eSlot] = (e.horario || e.timeSlot).split('-').map(Number);
+                        return eDay === timetableIndex && eSlot === slotIndex;
+                    }
+                    return false;
+                });
+                
+                html += `
+                    <div class="day-card rounded-2xl p-4 lg:p-5">
+                        <div class="flex items-start gap-4">
+                            <div class="w-16 h-16 ${config.color} rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md">
+                                <i class="fa-solid ${config.icon} text-2xl"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div>
+                                        <h4 class="text-lg font-black text-slate-800">${subject}</h4>
+                                        <p class="text-sm text-slate-500 font-medium"><i class="fa-regular fa-clock mr-1.5"></i>${timeLabels[slotIndex]}</p>
+                                    </div>
+                                    ${slotEvents.length > 0 ? `<span class="px-3 py-1.5 bg-red-100 text-red-600 rounded-full text-xs font-bold">${slotEvents.length} actividad(es)</span>` : ''}
+                                </div>
+                                ${slotEvents.length > 0 ? `
+                                    <div class="space-y-2 mt-3">
+                                        ${slotEvents.map(e => {
+                                            let badgeClass = 'event-prueba';
+                                            const tipo = e.tipo || e.type;
+                                            if(tipo === 'tp') badgeClass = 'event-tp';
+                                            if(tipo === 'obligacion') badgeClass = 'event-obligacion';
+                                            
+                                            return `
+                                                <div class="${badgeClass} rounded-xl p-3 shadow-md">
+                                                    <div class="flex items-center justify-between">
+                                                        <h5 class="font-bold text-slate-800">${e.titulo || e.title}</h5>
+                                                        <button onclick="openCreateModal('${e.fecha || e.date}', '${e.id}')" class="text-slate-400 hover:text-primary-600 btn-press">
+                                                            <i class="fa-solid fa-pen"></i>
+                                                        </button>
+                                                    </div>
+                                                    ${e.modalidad ? `<p class="text-xs text-slate-500 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1"></i>${e.modalidad}</p>` : ''}
+                                                    ${e.temas || e.topics ? `<p class="text-sm text-slate-600 mt-2 font-medium">${e.temas || e.topics}</p>` : ''}
+                                                    ${e.archivo ? `
+                                                        <a href="${e.archivo}" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-primary-600 font-bold mt-2 hover:underline">
+                                                            <i class="fa-solid fa-paperclip"></i>Ver archivo
+                                                        </a>
+                                                    ` : ''}
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                ` : `<p class="text-sm text-slate-400 font-medium mt-2"><i class="fa-solid fa-check-circle mr-1.5"></i>Sin actividades asignadas</p>`}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
         function renderListView() {
             const container = document.getElementById('calendar-content');
             
             let filteredEvents = [...events];
             
-            // Apply filters
             if (listFilters.month !== 'all') {
                 filteredEvents = filteredEvents.filter(e => {
                     const eDate = new Date(e.fecha || e.date);
@@ -1490,7 +1633,6 @@
             
             filteredEvents = filteredEvents.filter(e => listFilters.types.includes(e.tipo || e.type));
             
-            // Sort
             filteredEvents.sort((a, b) => {
                 const aDate = new Date(a.fecha || a.date);
                 const bDate = new Date(b.fecha || b.date);
@@ -1500,12 +1642,12 @@
             if(filteredEvents.length === 0) {
                 container.innerHTML = `
                     <div class="flex flex-col items-center justify-center py-16 text-slate-400">
-                        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fa-regular fa-calendar-xmark text-4xl"></i>
+                        <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+                            <i class="fa-regular fa-calendar-xmark text-5xl"></i>
                         </div>
-                        <p class="text-lg font-semibold text-slate-600 mb-2">No hay actividades</p>
-                        <p class="text-sm">Prueba ajustando los filtros</p>
-                        <button onclick="resetListFilters()" class="mt-4 px-6 py-2 bg-primary-500 text-white rounded-xl font-medium btn-press">
+                        <p class="text-xl font-black text-slate-600 mb-2">No hay actividades</p>
+                        <p class="text-sm font-medium">Prueba ajustando los filtros</p>
+                        <button onclick="resetListFilters()" class="mt-6 px-8 py-3 bg-gradient-to-r from-primary-500 to-indigo-600 text-white rounded-2xl font-bold btn-press shadow-lg">
                             Restablecer filtros
                         </button>
                     </div>
@@ -1533,39 +1675,42 @@
                 const isOverdue = new Date(e.fecha || e.date) < new Date() && !e.done;
 
                 html += `
-                    <div class="p-4 hover:bg-slate-50 transition-colors card-hover ${isOverdue ? 'bg-red-50/30' : ''}">
-                        <div class="flex items-start gap-4">
-                            <div class="flex flex-col items-center justify-center w-14 h-14 ${typeBg} rounded-xl border-2 ${isOverdue ? 'border-red-200' : 'border-slate-200'} flex-shrink-0">
-                                <span class="text-[10px] font-bold text-slate-500 uppercase">${dateObj.toLocaleDateString('es-ES', { month: 'short' })}</span>
-                                <span class="text-xl font-bold ${isOverdue ? 'text-red-600' : 'text-slate-800'} leading-none">${dateObj.getDate()}</span>
+                    <div class="p-5 lg:p-6 hover:bg-gradient-to-br hover:from-slate-50 hover:to-white transition-all card-hover ${isOverdue ? 'bg-red-50/30' : ''}">
+                        <div class="flex items-start gap-5">
+                            <div class="flex flex-col items-center justify-center w-16 h-16 ${typeBg} rounded-2xl border-2 ${isOverdue ? 'border-red-300' : 'border-slate-200'} flex-shrink-0 shadow-md">
+                                <span class="text-[10px] font-black text-slate-500 uppercase">${dateObj.toLocaleDateString('es-ES', { month: 'short' })}</span>
+                                <span class="text-2xl font-black ${isOverdue ? 'text-red-600' : 'text-slate-800'} leading-none">${dateObj.getDate()}</span>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <div class="flex justify-between items-start gap-2">
+                                <div class="flex justify-between items-start gap-3">
                                     <div class="flex-1 min-w-0">
-                                        <h4 class="text-base font-bold text-slate-800 truncate">${titulo}</h4>
-                                        <div class="flex flex-wrap items-center gap-2 mt-1.5">
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold ${config.color} ${config.text} border ${config.color.replace('bg-', 'border-').replace('100', '200')}">
+                                        <h4 class="text-lg font-black text-slate-800 truncate">${titulo}</h4>
+                                        <div class="flex flex-wrap items-center gap-2.5 mt-2">
+                                            <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black ${config.color} ${config.text} border ${config.color.replace('bg-', 'border-').replace('100', '200')} shadow-sm">
                                                 <i class="fa-solid ${config.icon} mr-1.5"></i>${materia}
                                             </span>
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold ${typeBg} ${typeColor} border ${typeColor.replace('text-', 'border-').replace('600', '200')}">
+                                            <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[10px] font-black ${typeBg} ${typeColor} border ${typeColor.replace('text-', 'border-').replace('600', '200')} shadow-sm">
                                                 <i class="fa-solid ${typeIcon} mr-1.5"></i>${tipo.toUpperCase()}
                                             </span>
-                                            ${e.modalidad ? `<span class="text-[10px] text-slate-400 uppercase font-medium">${e.modalidad}</span>` : ''}
+                                            ${e.modalidad ? `<span class="text-[10px] text-slate-400 uppercase font-bold">${e.modalidad}</span>` : ''}
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2 flex-shrink-0">
                                         ${e.archivo ? `
-                                            <a href="${e.archivo}" target="_blank" class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-primary-50 hover:text-primary-600 btn-press" title="Ver archivo">
+                                            <a href="${e.archivo}" target="_blank" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-primary-50 hover:text-primary-600 btn-press transition-all" title="Ver archivo">
                                                 <i class="fa-solid fa-paperclip"></i>
                                             </a>
-                                        ` : ''}
-                                        <button onclick="deleteEvent('${e.id}')" class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-red-50 hover:text-red-600 btn-press" title="Eliminar">
+                                         ` : ''}
+                                        <button onclick="openCreateModal('${e.fecha || e.date}', '${e.id}')" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-primary-50 hover:text-primary-600 btn-press transition-all" title="Editar">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button onclick="deleteEvent('${e.id}')" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-red-50 hover:text-red-600 btn-press transition-all" title="Eliminar">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
                                 </div>
-                                ${e.temas || e.topics ? `<p class="text-sm text-slate-500 mt-2 line-clamp-2">${e.temas || e.topics}</p>` : ''}
-                                ${e.horario ? `<p class="text-xs text-slate-400 mt-1.5"><i class="fa-regular fa-clock mr-1"></i>${e.horario}</p>` : ''}
+                                ${e.temas || e.topics ? `<p class="text-sm text-slate-500 mt-3 font-medium line-clamp-2">${e.temas || e.topics}</p>` : ''}
+                                ${e.horario ? `<p class="text-xs text-slate-400 mt-2 font-medium"><i class="fa-regular fa-clock mr-1.5"></i>${e.horario}</p>` : ''}
                             </div>
                         </div>
                     </div>
@@ -1579,7 +1724,6 @@
         // ============================================
         // TOAST NOTIFICATIONS
         // ============================================
-        
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -1588,20 +1732,20 @@
             let bgClass = '';
             
             if (type === 'success') {
-                icon = '<i class="fa-solid fa-circle-check text-green-400"></i>';
-                bgClass = 'bg-slate-800';
+                icon = '<i class="fa-solid fa-circle-check text-green-400 text-xl"></i>';
+                bgClass = 'bg-gradient-to-r from-slate-800 to-slate-900';
             } else if (type === 'error') {
-                icon = '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
-                bgClass = 'bg-slate-800';
+                icon = '<i class="fa-solid fa-circle-exclamation text-red-400 text-xl"></i>';
+                bgClass = 'bg-gradient-to-r from-slate-800 to-slate-900';
             } else if (type === 'warning') {
-                icon = '<i class="fa-solid fa-triangle-exclamation text-amber-400"></i>';
-                bgClass = 'bg-slate-800';
+                icon = '<i class="fa-solid fa-triangle-exclamation text-amber-400 text-xl"></i>';
+                bgClass = 'bg-gradient-to-r from-slate-800 to-slate-900';
             }
             
-            toast.className = `toast ${bgClass} text-white px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 w-full`;
+            toast.className = `toast ${bgClass} text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-3 w-full`;
             toast.innerHTML = `
                 ${icon}
-                <span class="text-sm font-medium flex-1">${message}</span>
+                <span class="text-sm font-bold flex-1">${message}</span>
             `;
             
             container.appendChild(toast);
@@ -1609,10 +1753,9 @@
             setTimeout(() => toast.classList.add('show'), 10);
             setTimeout(() => {
                 toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 400);
-            }, 3000);
+                setTimeout(() => toast.remove(), 500);
+            }, 3500);
         }
     </script>
 </body>
 </html>
-
