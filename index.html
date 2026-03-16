@@ -84,9 +84,9 @@
             <p class="text-slate-500 mb-4">Colegio Fasta San Vicente de Paúl</p>
             <div id="connection-status-loading" class="connection-status checking">
                 <span class="status-dot checking"></span>
-                <span>Conectando con Google Sheets...</span>
+                <span id="loading-text">Conectando con Google Sheets...</span>
             </div>
-            <p class="text-xs text-slate-400 mt-3">Sincronización en tiempo real</p>
+            <p id="loading-subtext" class="text-xs text-slate-400 mt-3">Cargando datos...</p>
         </div>
     </div>
 
@@ -421,11 +421,12 @@
 
     <script>
         // ============================================
-        // CONFIGURATION - TU URL ACTUALIZADA
+        // CONFIGURATION
         // ============================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhQR18KUCrYmYZb1l_S4lHzQN2tqJOsY4Pe8POPhlmJB7MI0YljiEbFXaFJx9ROV_3/exec';
         
         let isConnected = false;
+        let isLoadingComplete = false;
         
         const subjectsConfig = {
             'MATEMATICA': { color: 'bg-math', icon: 'fa-calculator', label: 'Matemática' },
@@ -526,79 +527,128 @@
         }
 
         // ============================================
-        // GOOGLE SHEETS API - JSONP PARA MÓVILES
+        // HIDE LOADING SCREEN
+        // ============================================
+        function hideLoadingScreen() {
+            if (isLoadingComplete) return;
+            isLoadingComplete = true;
+            
+            console.log('📱 Hiding loading screen...');
+            
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loading-screen');
+                const app = document.getElementById('app');
+                
+                if (loadingScreen) loadingScreen.classList.add('opacity-0');
+                setTimeout(() => {
+                    if (loadingScreen) loadingScreen.classList.add('hidden');
+                    if (app) app.classList.remove('hidden');
+                    console.log('✅ Loading screen hidden, app visible');
+                }, 500);
+            }, 1000);
+        }
+
+        // ============================================
+        // GOOGLE SHEETS API - JSONP
         // ============================================
         
-        // Callback function for JSONP responses (GET)
+        // Callback function for JSONP responses
         window.handleData = function(response) {
-            console.log('✅ Datos recibidos de Google Sheets:', response);
+            console.log('✅ handleData called with:', response);
             
-            if (response && response.success && response.data) {
-                events = response.data;
-                updateConnectionStatus('online');
-                showToast('Datos sincronizados', 'success');
-                
-                // Save to localStorage as backup cache
-                localStorage.setItem('agenda3roa_events', JSON.stringify(events));
-                localStorage.setItem('agenda3roa_last_sync', new Date().toISOString());
-            } else {
+            try {
+                if (response && response.success) {
+                    events = response.data || [];
+                    console.log('📊 Loaded', events.length, 'events from Google Sheets');
+                    updateConnectionStatus('online');
+                    
+                    // Save to localStorage as backup
+                    localStorage.setItem('agenda3roa_events', JSON.stringify(events));
+                    localStorage.setItem('agenda3roa_last_sync', new Date().toISOString());
+                    
+                    showToast(`Datos sincronizados (${events.length} eventos)`, 'success');
+                } else {
+                    console.warn('⚠️ Response not successful:', response);
+                    updateConnectionStatus('offline');
+                    loadFromLocalStorage();
+                }
+            } catch (error) {
+                console.error('❌ Error in handleData:', error);
                 updateConnectionStatus('offline');
-                showToast('Error al cargar datos', 'error');
+                loadFromLocalStorage();
             }
             
             renderCalendar();
             updateStats();
-            
-            // Hide loading screen
-            setTimeout(() => {
-                document.getElementById('loading-screen').classList.add('opacity-0');
-                setTimeout(() => {
-                    document.getElementById('loading-screen').classList.add('hidden');
-                    document.getElementById('app').classList.remove('hidden');
-                }, 500);
-            }, 1000);
+            hideLoadingScreen();
         };
 
-        // Load data from Google Sheets using JSONP (works on mobile)
+        // Load from localStorage as fallback
+        function loadFromLocalStorage() {
+            const cached = localStorage.getItem('agenda3roa_events');
+            if (cached) {
+                try {
+                    events = JSON.parse(cached);
+                    console.log('📦 Loaded', events.length, 'events from localStorage');
+                    showToast('Usando datos en caché', 'warning');
+                } catch (e) {
+                    console.error('❌ Error parsing cached data:', e);
+                    events = [];
+                }
+            } else {
+                console.log('📭 No cached data found');
+                events = [];
+            }
+        }
+
+        // Sync with Google Sheets using JSONP
         function syncWithSheets() {
+            console.log('🔄 Starting sync with Google Sheets...');
             updateConnectionStatus('checking');
-            showToast('Sincronizando...', 'warning');
             
-            // Create script element for JSONP
+            const loadingText = document.getElementById('loading-text');
+            const loadingSubtext = document.getElementById('loading-subtext');
+            if (loadingText) loadingText.textContent = 'Conectando...';
+            if (loadingSubtext) loadingSubtext.textContent = 'Descargando datos...';
+            
+            // Remove any existing script tags to avoid duplicates
+            const existingScripts = document.querySelectorAll('script[data-gsheets="true"]');
+            existingScripts.forEach(s => s.remove());
+            
+            // Create new script element for JSONP
             const script = document.createElement('script');
+            script.setAttribute('data-gsheets', 'true');
             const timestamp = new Date().getTime();
             script.src = `${GOOGLE_SCRIPT_URL}?callback=handleData&_t=${timestamp}`;
             
             script.onerror = function() {
-                console.error('❌ Error loading from Google Sheets');
+                console.error('❌ Script failed to load');
                 updateConnectionStatus('offline');
                 showToast('Error de conexión', 'error');
-                
-                // Try to load from localStorage cache
-                const cached = localStorage.getItem('agenda3roa_events');
-                if (cached) {
-                    events = JSON.parse(cached);
-                    renderCalendar();
-                    updateStats();
-                    showToast('Usando datos en caché', 'warning');
-                }
-                
-                // Hide loading screen
-                setTimeout(() => {
-                    document.getElementById('loading-screen').classList.add('opacity-0');
-                    setTimeout(() => {
-                        document.getElementById('loading-screen').classList.add('hidden');
-                        document.getElementById('app').classList.remove('hidden');
-                    }, 500);
-                }, 1000);
+                loadFromLocalStorage();
+                renderCalendar();
+                updateStats();
+                hideLoadingScreen();
+            };
+            
+            script.onload = function() {
+                console.log('✅ Script loaded successfully');
             };
             
             document.body.appendChild(script);
+            console.log('📜 Script tag added to body');
             
-            // Remove script after loading
-            script.onload = function() {
-                document.body.removeChild(script);
-            };
+            // Timeout fallback - hide loading after 10 seconds even if no response
+            setTimeout(() => {
+                if (!isLoadingComplete) {
+                    console.warn('⏱️ Timeout - forcing load from cache');
+                    updateConnectionStatus('offline');
+                    loadFromLocalStorage();
+                    renderCalendar();
+                    updateStats();
+                    hideLoadingScreen();
+                }
+            }, 10000);
         }
 
         // Save data to Google Sheets
@@ -609,7 +659,7 @@
             submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch spinner"></i> Guardando...';
             
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
@@ -626,12 +676,11 @@
                     events = events.filter(e => e.id !== eventData.id);
                 }
                 
-                // Save to localStorage as cache
+                // Save to localStorage
                 localStorage.setItem('agenda3roa_events', JSON.stringify(events));
-                localStorage.setItem('agenda3roa_last_sync', new Date().toISOString());
                 
                 updateConnectionStatus('online');
-                showToast(action === 'delete' ? 'Eliminado' : '¡Guardado en Google Sheets!', 'success');
+                showToast(action === 'delete' ? 'Eliminado' : '¡Guardado!', 'success');
                 closeModal();
                 renderCalendar();
                 updateStats();
@@ -1398,10 +1447,15 @@
         }
 
         // ============================================
-        // INITIAL SYNC
+        // INITIALIZE
         // ============================================
-        // Start sync when page loads
-        syncWithSheets();
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 App initializing...');
+            renderSubjectFilters();
+            populateSubjectDropdown();
+            populateFilterDropdowns();
+            syncWithSheets();
+        });
     </script>
 </body>
 </html>
