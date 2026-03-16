@@ -405,6 +405,9 @@ let activeFilter = null;
 let selectedDayForModal = null;
 let listFilters = { month: 'all', subject: 'all', types: ['prueba', 'tp', 'obligacion'], sort: 'asc' };
 
+// ============================================
+// DATE UTILITIES - NORMALIZAR FECHAS
+// ============================================
 function getLocalDateString(date) {
 if (!date) return '';
 try {
@@ -420,25 +423,32 @@ return '';
 
 function parseLocalDate(dateString) {
 if (!dateString || dateString === 'undefined' || dateString === 'null') {
-console.warn('⚠️ Invalid date value:', dateString);
 return new Date();
 }
 try {
 const dateOnly = String(dateString).split('T')[0].split(' ')[0];
 const [year, month, day] = dateOnly.split('-').map(Number);
 if (!year || !month || !day || year < 2000 || year > 2100) {
-console.warn('⚠️ Invalid date components:', { year, month, day });
 return new Date();
 }
 const result = new Date(year, month - 1, day);
 if (isNaN(result.getTime())) {
-console.warn('⚠️ Invalid date result:', dateString);
 return new Date();
 }
 return result;
 } catch (error) {
-console.error('❌ Error parsing date:', dateString, error);
 return new Date();
+}
+}
+
+// NUEVA FUNCIÓN: Normalizar fecha para comparación
+function normalizeDate(dateStr) {
+if (!dateStr) return '';
+try {
+const date = parseLocalDate(dateStr);
+return getLocalDateString(date);
+} catch (error) {
+return '';
 }
 }
 
@@ -492,22 +502,39 @@ if (app) app.classList.remove('hidden');
 }, 1000);
 }
 
+// ============================================
+// GOOGLE SHEETS API - CON DEBUG MEJORADO
+// ============================================
 window.handleData = function(response) {
 console.log('✅ handleData called:', response);
 console.log('📊 Raw data:', response.data);
+console.log('📊 Number of events:', response.data ? response.data.length : 0);
+
 try {
 if (response && response.success) {
 events = response.data || [];
+
+// Debug: Log all events with their dates
 if (events.length > 0) {
-console.log('🔍 First event:', events[0]);
-console.log('🔍 First event fecha:', events[0].fecha);
-console.log('🔍 First event date:', events[0].date);
+console.log('🔍 All events:');
+events.forEach((e, i) => {
+console.log(`  [${i}] fecha: ${e.fecha}, date: ${e.date}, titulo: ${e.titulo || e.title}`);
+});
 }
+
 console.log('📊 Loaded', events.length, 'events from Google Sheets');
 updateConnectionStatus('online');
+
 localStorage.setItem('agenda3roa_events', JSON.stringify(events));
 localStorage.setItem('agenda3roa_last_sync', new Date().toISOString());
+
 showToast(`Datos sincronizados (${events.length} eventos)`, 'success');
+
+// Forzar renderizado después de cargar datos
+setTimeout(() => {
+renderCalendar();
+updateStats();
+}, 100);
 } else {
 console.warn('⚠️ Response not successful:', response);
 updateConnectionStatus('offline');
@@ -518,8 +545,7 @@ console.error('❌ Error in handleData:', error);
 updateConnectionStatus('offline');
 loadFromLocalStorage();
 }
-renderCalendar();
-updateStats();
+
 hideLoadingScreen();
 };
 
@@ -538,6 +564,9 @@ events = [];
 console.log('📭 No cached data found');
 events = [];
 }
+renderCalendar();
+updateStats();
+hideLoadingScreen();
 }
 
 function syncWithSheets() {
@@ -558,9 +587,6 @@ console.error('❌ Script failed to load');
 updateConnectionStatus('offline');
 showToast('Error de conexión', 'error');
 loadFromLocalStorage();
-renderCalendar();
-updateStats();
-hideLoadingScreen();
 };
 script.onload = function() {
 console.log('✅ Script loaded successfully');
@@ -572,9 +598,6 @@ if (!isLoadingComplete) {
 console.warn('⏱️ Timeout - forcing load from cache');
 updateConnectionStatus('offline');
 loadFromLocalStorage();
-renderCalendar();
-updateStats();
-hideLoadingScreen();
 }
 }, 10000);
 }
@@ -584,12 +607,15 @@ const submitBtn = document.getElementById('submit-btn');
 const originalText = submitBtn.innerHTML;
 submitBtn.disabled = true;
 submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch spinner"></i> Guardando...';
+
+// Normalizar fecha
 if (eventData.fecha) {
 const dateParts = eventData.fecha.split('T')[0].split('-');
 if (dateParts.length === 3) {
 eventData.fecha = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
 }
 }
+
 try {
 await fetch(GOOGLE_SCRIPT_URL, {
 method: 'POST',
@@ -597,6 +623,7 @@ mode: 'no-cors',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ action: action, ...eventData })
 });
+
 if (action === 'create') {
 events.push(eventData);
 } else if (action === 'update') {
@@ -605,14 +632,21 @@ if (index !== -1) events[index] = eventData;
 } else if (action === 'delete') {
 events = events.filter(e => e.id !== eventData.id);
 }
+
 localStorage.setItem('agenda3roa_events', JSON.stringify(events));
+
 updateConnectionStatus('online');
 showToast(action === 'delete' ? 'Eliminado' : '¡Guardado!', 'success');
 closeModal();
-renderCalendar();
-updateStats();
+
+// Forzar recarga desde Google Sheets después de guardar
+setTimeout(() => {
+syncWithSheets();
+}, 500);
+
 } catch (error) {
 console.error('Save error:', error);
+
 if (action === 'create') {
 events.push(eventData);
 } else if (action === 'update') {
@@ -622,10 +656,12 @@ if (index !== -1) events[index] = eventData;
 events = events.filter(e => e.id !== eventData.id);
 }
 localStorage.setItem('agenda3roa_events', JSON.stringify(events));
+
 showToast('Guardado localmente', 'warning');
 closeModal();
 renderCalendar();
 updateStats();
+
 } finally {
 submitBtn.disabled = false;
 submitBtn.innerHTML = originalText;
@@ -1018,6 +1054,9 @@ const displayDesktop = document.getElementById('current-date-display-desktop');
 const formatted = currentDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' }).replace(/^\w/, c => c.toUpperCase());
 if(displayMobile) displayMobile.textContent = formatted;
 if(displayDesktop) displayDesktop.textContent = formatted;
+
+console.log('📅 renderCalendar called, view:', currentView, 'events:', events.length);
+
 if (currentView === 'month') renderMonthView(container);
 else if (currentView === 'week') renderWeekView(container);
 else if (currentView === 'day') renderDayViewFull(container);
@@ -1027,16 +1066,27 @@ renderListView();
 }
 }
 
+// ============================================
+// GET EVENTS FOR DATE - CORREGIDA PARA COMPARAR FECHAS NORMALIZADAS
+// ============================================
 function getEventsForDate(date) {
-const dateStr = getLocalDateString(date);
+const targetDateStr = normalizeDate(date);
+console.log('🔍 getEventsForDate:', targetDateStr, 'Total events:', events.length);
+
 let dayEvents = events.filter(e => {
-const eventDate = e.fecha || e.date;
-if (!eventDate) return false;
-return eventDate === dateStr;
+const eventDate = normalizeDate(e.fecha || e.date);
+const matches = eventDate === targetDateStr;
+if (matches) {
+console.log('  ✅ Match found:', e.titulo || e.title, 'on', eventDate);
+}
+return matches;
 });
+
 if (activeFilter) {
 dayEvents = dayEvents.filter(e => e.materia === activeFilter || e.subject === activeFilter);
 }
+
+console.log('  📊 Events for this date:', dayEvents.length);
 return dayEvents;
 }
 
@@ -1110,7 +1160,8 @@ return;
 const subject = timetable[dayIdx][slotIdx];
 const dateStr = getLocalDateString(d);
 const slotEvents = events.filter(e => {
-if ((e.fecha || e.date) !== dateStr) return false;
+const eventDate = normalizeDate(e.fecha || e.date);
+if (eventDate !== dateStr) return false;
 if (e.horario || e.timeSlot) {
 const [eDay, eSlot] = (e.horario || e.timeSlot).split('-').map(Number);
 return eDay === dayIdx && eSlot === slotIdx;
